@@ -8,6 +8,7 @@ Dir.glob(File.join(File.dirname(__FILE__),
                    '*.rb'), &method(:require))
 
 require 'factory_bot'
+require 'pry'
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods

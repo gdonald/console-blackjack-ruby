@@ -12,8 +12,8 @@ RSpec.describe Card do
       expect(card.value).to eq(0)
     end
 
-    it 'has a suite_value' do
-      expect(card.suite_value).to eq(0)
+    it 'has a suite' do
+      expect(card.suite).to eq(0)
     end
   end
 

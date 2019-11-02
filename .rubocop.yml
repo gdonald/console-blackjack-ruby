@@ -1,3 +1,28 @@
 require: rubocop-rspec
+
 Documentation:
   Enabled: false
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+RSpec/Be:
+  Exclude:
+    - 'spec/**/*.rb'
+RSpec/NotToNot:
+  Exclude:
+    - 'spec/**/*.rb'
+Metrics/AbcSize:
+  Exclude:
+    - 'lib/**/*.rb'
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/**/*.rb'
+Metrics/MethodLength:
+  Exclude:
+    - 'lib/**/*.rb'
+Metrics/PerceivedComplexity:
+  Exclude:
+    - 'lib/**/*.rb'
+Metrics/LineLength:
+  Exclude:
+    - 'lib/**/*.rb'
