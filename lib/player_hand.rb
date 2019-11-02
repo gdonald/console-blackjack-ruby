@@ -83,9 +83,9 @@ class PlayerHand < Hand
     game.current_player_hand.get_action
   end
 
-  def dbl; end
+  def dbl!; end
 
-  def stand; end
+  def stand!; end
 
   def process; end
 

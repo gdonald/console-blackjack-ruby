@@ -19,7 +19,7 @@ class Game
   def load_game; end
 
   def all_bets
-    player_hands.inject { |sum, player_hand| sum + player_hand.bet }
+    player_hands.inject(0) { |sum, player_hand| sum + player_hand.bet }
   end
 
   def ask_insurance; end

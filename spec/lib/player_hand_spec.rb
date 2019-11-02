@@ -3,8 +3,12 @@
 RSpec.describe PlayerHand do
   let(:game) { build(:game) }
   let(:player_hand) { build(:player_hand, game: game) }
-  let(:ten) { build(:card, :ten) }
   let(:ace) { build(:card, :ace) }
+  let(:six) { build(:card, :six) }
+  let(:seven) { build(:card, :seven) }
+  let(:eight) { build(:card, :eight) }
+  let(:nine) { build(:card, :nine) }
+  let(:ten) { build(:card, :ten) }
 
   describe '.new' do
     it 'creates a player_hand' do
@@ -56,6 +60,212 @@ RSpec.describe PlayerHand do
       it 'returns 11' do
         player_hand.cards << ten << ace
         expect(player_hand.value(Hand::CountMethod::HARD)).to eq(11)
+      end
+    end
+  end
+
+  describe '#done?' do
+    context 'when played' do
+      it 'returns true' do
+        player_hand.played = true
+        expect(player_hand).to be_done
+      end
+    end
+
+    context 'when stood' do
+      it 'returns true' do
+        player_hand.stood = true
+        expect(player_hand).to be_done
+      end
+    end
+
+    context 'when blackjack' do
+      it 'returns true' do
+        player_hand.cards << ace << ten
+        expect(player_hand).to be_done
+      end
+    end
+
+    context 'when busted' do
+      it 'returns true' do
+        player_hand.cards << ten << ten << ten
+        expect(player_hand).to be_done
+      end
+    end
+
+    context 'when soft count of 21' do
+      it 'returns true' do
+        player_hand.cards << ace << ace << nine
+        expect(player_hand).to be_done
+      end
+    end
+
+    context 'when hard count of 21' do
+      it 'returns true' do
+        player_hand.cards << ace << ten << ten
+        expect(player_hand).to be_done
+      end
+    end
+
+    context 'when pair of sevens' do
+      it 'returns false' do
+        player_hand.cards << seven << seven
+        expect(player_hand).to_not be_done
+      end
+    end
+  end
+
+  describe '#can_split?' do
+    context 'when stood' do
+      it 'returns false' do
+        player_hand.stood = true
+        expect(player_hand).to_not be_can_split
+      end
+    end
+
+    context 'when MAX_PLAYER_HANDS' do
+      it 'returns false' do
+        6.times { game.player_hands << build(:player_hand) }
+        expect(player_hand).to_not be_can_split
+      end
+    end
+
+    context 'when not enough money' do
+      it 'returns false' do
+        game.money = 9999
+        expect(player_hand).to_not be_can_split
+      end
+    end
+
+    context 'when more than 2 cards' do
+      it 'returns false' do
+        player_hand.cards << ace << ace << ace
+        expect(player_hand).to_not be_can_split
+      end
+    end
+
+    context 'when card values do not match' do
+      it 'returns false' do
+        player_hand.cards << seven << nine
+        expect(player_hand).to_not be_can_split
+      end
+    end
+
+    context 'when card values match' do
+      it 'returns true' do
+        player_hand.cards << seven << seven
+        expect(player_hand).to be_can_split
+      end
+    end
+  end
+
+  describe '#can_dbl?' do
+    context 'when not enough money' do
+      it 'returns false' do
+        game.money = 9999
+        expect(player_hand).to_not be_can_dbl
+      end
+    end
+
+    context 'when stood' do
+      it 'returns false' do
+        player_hand.stood = true
+        expect(player_hand).to_not be_can_dbl
+      end
+    end
+
+    context 'when more than 2 cards' do
+      it 'returns false' do
+        player_hand.cards << ace << ace << ace
+        expect(player_hand).to_not be_can_dbl
+      end
+    end
+
+    context 'when blackjack' do
+      it 'returns false' do
+        player_hand.cards << ace << ten
+        expect(player_hand).to_not be_can_dbl
+      end
+    end
+
+    context 'when a pair of sixes' do
+      it 'returns true' do
+        player_hand.cards << six << six
+        expect(player_hand).to be_can_dbl
+      end
+    end
+  end
+
+  describe '#can_stand?' do
+    context 'when stood' do
+      it 'returns false' do
+        player_hand.stood = true
+        expect(player_hand).to_not be_can_stand
+      end
+    end
+
+    context 'when blackjack' do
+      it 'returns false' do
+        player_hand.cards << ace << ten
+        expect(player_hand).to_not be_can_stand
+      end
+    end
+
+    context 'when busted' do
+      it 'returns false' do
+        player_hand.cards << eight << eight << eight
+        expect(player_hand).to_not be_can_stand
+      end
+    end
+
+    context 'when a pair of sixes' do
+      it 'returns true' do
+        player_hand.cards << six << six
+        expect(player_hand).to be_can_stand
+      end
+    end
+  end
+
+  describe '#can_hit?' do
+    context 'when played' do
+      it 'returns false' do
+        player_hand.played = true
+        expect(player_hand).to_not be_can_hit
+      end
+    end
+
+    context 'when stood' do
+      it 'returns false' do
+        player_hand.stood = true
+        expect(player_hand).to_not be_can_hit
+      end
+    end
+
+    context 'when blackjack' do
+      it 'returns false' do
+        player_hand.cards << ace << ten
+        expect(player_hand).to_not be_can_hit
+      end
+    end
+
+    context 'when busted' do
+      it 'returns false' do
+        player_hand.cards << eight << eight << eight
+        expect(player_hand).to_not be_can_hit
+      end
+    end
+
+    context 'when a hard 21' do
+      it 'returns false' do
+        player_hand.cards << seven << seven << seven
+        expect(player_hand).to_not be_can_hit
+      end
+    end
+
+    context 'when a pair of sixes' do
+      it 'returns true' do
+        player_hand.cards << six << six
+        expect(player_hand).to be_can_hit
       end
     end
   end
