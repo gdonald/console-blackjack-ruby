@@ -13,12 +13,16 @@ class Hand
     HARD = 1
   end
 
-  attr_accessor :cards, :game, :stood, :played
+  attr_accessor :cards, :game, :played
 
   def initialize(game)
     @game = game
     @played = false
-    @stood = false
+    @cards = []
+  end
+
+  def deal_card
+    cards << game.shoe.next_card
   end
 
   def blackjack?
@@ -26,8 +30,4 @@ class Hand
 
     cards.first.ace? && cards.last.ten? || cards.first.ten? && cards.last.ace?
   end
-
-  # def done?
-  #   false
-  # end
 end

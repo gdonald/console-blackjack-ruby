@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :hand do
-    cards { [] }
+  factory :dealer_hand do
     game { nil }
-    played { false }
+    hide_down_card { true }
 
     initialize_with { new(game) }
   end

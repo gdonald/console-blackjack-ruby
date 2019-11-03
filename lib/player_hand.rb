@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-require 'hand'
+require_relative 'hand'
 
 class PlayerHand < Hand
   MAX_PLAYER_HANDS = 7
 
-  attr_accessor :game, :bet, :status, :payed, :cards
+  attr_accessor :game, :bet, :status, :payed, :cards, :stood
 
   def initialize(game, bet)
-    @game = game
+    super(game)
     @bet = bet
     @status = Hand::Status::UNKNOWN
     @payed = false
-    @cards = []
+    @stood = false
   end
 
   def busted?
@@ -35,7 +35,8 @@ class PlayerHand < Hand
 
   def done?
     if played || stood || blackjack? || busted? ||
-       value(Hand::CountMethod::SOFT) == 21 || value(Hand::CountMethod::HARD) == 21
+       value(Hand::CountMethod::SOFT) == 21 ||
+       value(Hand::CountMethod::HARD) == 21
       self.played = true
 
       if !payed && busted?
@@ -71,23 +72,110 @@ class PlayerHand < Hand
     !(played || stood || value(Hand::CountMethod::HARD) == 21 || blackjack? || busted?)
   end
 
-  def hit!
+  def hit
     deal_card
 
     if done?
       process
+    else
+      game.draw_hands
+      game.current_player_hand.action?
+    end
+  end
+
+  def dbl
+    deal_card
+
+    self.played = true
+    self.bet *= 2
+    process if done?
+  end
+
+  def stand
+    self.stood = true
+    self.played = true
+
+    if game.more_hands_to_play?
+      game.play_more_hands
       return
     end
 
+    game.play_dealer_hand
     game.draw_hands
-    game.current_player_hand.get_action
+    game.draw_bet_options
   end
 
-  def dbl!; end
+  def process
+    if game.more_hands_to_play?
+      game.play_more_hands
+      return
+    end
 
-  def stand!; end
+    game.play_dealer_hand
+    game.draw_hands
+    game.draw_bet_options
+  end
 
-  def process; end
+  def draw(index)
+    out = String.new(' ')
+    cards.each do |card|
+      out << "#{card} "
+    end
 
-  def draw(index); end
+    out << ' ⇒  ' << value(Hand::CountMethod::SOFT).to_s << '  '
+
+    if status == Hand::Status::LOST
+      out << '-'
+    elsif status == Hand::Status::WON
+      out << '+'
+    end
+
+    out << '$' << Game.format_money(bet / 100.0)
+    out << ' ⇐' if !played && index == game.current_hand
+    out << '  '
+
+    if status == Hand::Status::LOST
+      out << (busted? ? 'Busted!' : 'Lose!')
+    elsif status == Hand::Status::WON
+      out << (blackjack? ? 'Blackjack!' : 'Won!')
+    elsif status == Hand::Status::PUSH
+      out << 'Push'
+    end
+
+    out << "\n\n"
+    out
+  end
+
+  def action?
+    out = String.new(' ')
+    out << '(H) Hit  ' if can_hit?
+    out << '(S) Stand  ' if can_stand?
+    out << '(P) Split  ' if can_split?
+    out << '(D) Double  ' if can_dbl?
+    puts out
+
+    loop do
+      br = false
+      case Game.getc
+      when 'h'
+        br = true
+        hit
+      when 's'
+        br = true
+        stand
+      when 'p'
+        br = true
+        game.split_current_hand
+      when 'd'
+        br = true
+        dbl
+      else
+        game.clear
+        game.draw_hands
+        action?
+      end
+
+      break if br
+    end
+  end
 end

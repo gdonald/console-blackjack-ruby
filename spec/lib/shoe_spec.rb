@@ -46,10 +46,10 @@ RSpec.describe Shoe do
 
     it 'calls shuffle' do
       cards = instance_double(Array)
-      allow(cards).to receive(:shuffle)
+      allow(cards).to receive(:shuffle!)
       allow(shoe).to receive(:cards).and_return(cards)
       shoe.shuffle
-      expect(cards).to have_received(:shuffle)
+      expect(cards).to have_received(:shuffle!).exactly(7).times
     end
   end
 
@@ -64,6 +64,81 @@ RSpec.describe Shoe do
     it 'calls shuffle' do
       allow(shoe).to receive(:shuffle)
       shoe.new_regular
+      expect(shoe).to have_received(:shuffle)
+    end
+  end
+
+  describe '#new_aces' do
+    let(:shoe) { build(:shoe) }
+
+    it 'creates a shoe' do
+      shoe.new_aces
+      expect(shoe.cards.size).to eq(40)
+    end
+
+    it 'calls shuffle' do
+      allow(shoe).to receive(:shuffle)
+      shoe.new_aces
+      expect(shoe).to have_received(:shuffle)
+    end
+  end
+
+  describe '#new_jacks' do
+    let(:shoe) { build(:shoe) }
+
+    it 'creates a shoe' do
+      shoe.new_jacks
+      expect(shoe.cards.size).to eq(40)
+    end
+
+    it 'calls shuffle' do
+      allow(shoe).to receive(:shuffle)
+      shoe.new_jacks
+      expect(shoe).to have_received(:shuffle)
+    end
+  end
+
+  describe '#new_aces_jacks' do
+    let(:shoe) { build(:shoe) }
+
+    it 'creates a shoe' do
+      shoe.new_aces_jacks
+      expect(shoe.cards.size).to eq(80)
+    end
+
+    it 'calls shuffle' do
+      allow(shoe).to receive(:shuffle)
+      shoe.new_aces_jacks
+      expect(shoe).to have_received(:shuffle)
+    end
+  end
+
+  describe '#new_sevens' do
+    let(:shoe) { build(:shoe) }
+
+    it 'creates a shoe' do
+      shoe.new_sevens
+      expect(shoe.cards.size).to eq(40)
+    end
+
+    it 'calls shuffle' do
+      allow(shoe).to receive(:shuffle)
+      shoe.new_sevens
+      expect(shoe).to have_received(:shuffle)
+    end
+  end
+
+  describe '#new_eights' do
+    let(:shoe) { build(:shoe) }
+
+    it 'creates a shoe' do
+      shoe.new_eights
+      expect(shoe.cards.size).to eq(40)
+    end
+
+    it 'calls shuffle' do
+      allow(shoe).to receive(:shuffle)
+      shoe.new_eights
       expect(shoe).to have_received(:shuffle)
     end
   end

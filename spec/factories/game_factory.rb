@@ -8,6 +8,6 @@ FactoryBot.define do
     dealer_hand { nil }
     num_decks { 1 }
     current_bet { 500 }
-    current_player_hand { 0 }
+    current_hand { 0 }
   end
 end

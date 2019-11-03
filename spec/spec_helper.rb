@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start do
+  add_filter %r{/spec/}
+end
 
 Dir.glob(File.join(File.dirname(__FILE__),
                    '..' + File::SEPARATOR + 'lib', '**',
@@ -9,6 +11,8 @@ Dir.glob(File.join(File.dirname(__FILE__),
 
 require 'factory_bot'
 require 'pry'
+
+ENV['CLEAR_TERM'] = '0'
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods

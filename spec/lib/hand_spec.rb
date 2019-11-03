@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Hand do
-  let(:game) { build(:game) }
+  let(:shoe) { build(:shoe, :new_regular) }
+  let(:game) { build(:game, shoe: shoe) }
   let(:hand) { build(:hand, game: game) }
 
   describe '.new' do
@@ -11,6 +12,14 @@ RSpec.describe Hand do
 
     it 'has a game' do
       expect(hand.game).to eq(game)
+    end
+  end
+
+  describe '#deal_card' do
+    it 'adds a card to the hand' do
+      expect {
+        hand.deal_card
+      }.to change { hand.cards.size }.by(1)
     end
   end
 

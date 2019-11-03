@@ -6,6 +6,7 @@ FactoryBot.define do
     bet { 500 }
     status { Hand::Status::UNKNOWN }
     payed { false }
+    stood { false }
 
     initialize_with { new(game, bet) }
   end

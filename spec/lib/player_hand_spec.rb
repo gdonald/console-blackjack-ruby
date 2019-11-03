@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe PlayerHand do
-  let(:game) { build(:game) }
+  let(:shoe) { build(:shoe, :new_regular) }
+  let(:game) { build(:game, shoe: shoe) }
   let(:player_hand) { build(:player_hand, game: game) }
   let(:ace) { build(:card, :ace) }
   let(:six) { build(:card, :six) }
@@ -269,4 +270,35 @@ RSpec.describe PlayerHand do
       end
     end
   end
+
+  # describe '#hit' do
+  #   context 'when not done' do
+  #     it 'adds a card to the hand' do
+  #       allow(game).to receive(:draw_hands)
+  #       allow(game).to receive(:current_player_hand) { player_hand }
+  #       allow(player_hand).to receive(:action?)
+  #       expect { player_hand.hit }.to change { player_hand.cards.size }.by(1)
+  #     end
+  #   end
+  #
+  #   context 'when done' do
+  #     let(:dealer_hand) { build(:dealer_hand, game: game) }
+  #
+  #     it 'adds a card to the hand' do
+  #       game.dealer_hand = dealer_hand
+  #       allow(player_hand).to receive(:done?).and_return(true)
+  #       allow(STDIN).to receive(:getc).and_return('q')
+  #       expect { player_hand.hit }.to change { player_hand.cards.size }.by(1)
+  #     end
+  #   end
+  # end
+  #
+  # describe '#dbl' do
+  #   it 'adds a card, doubles the bet, ends the hand' do
+  #     # game.dealer_hand = dealer_hand
+  #     # allow(player_hand).to receive(:done?).and_return(true)
+  #     # allow(STDIN).to receive(:getc).and_return('q')
+  #     expect { player_hand.dbl }.to change { player_hand.cards.size }.by(1)
+  #   end
+  # end
 end
