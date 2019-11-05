@@ -47,7 +47,6 @@ class DealerHand < Hand
 
   def deal_required_cards
     soft, hard = both_values
-
     while soft < 18 && hard < 17
       deal_card
       soft, hard = both_values

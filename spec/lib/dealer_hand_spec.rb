@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe DealerHand do
+  let(:shoe) { build(:shoe, :new_regular) }
   let(:game) { build(:game) }
   let(:dealer_hand) { build(:dealer_hand, game: game) }
   let(:ace) { build(:card, :ace) }
@@ -150,6 +151,60 @@ RSpec.describe DealerHand do
         dealer_hand.cards << ace << ten << five
         dealer_hand.deal_required_cards
         expect(dealer_hand.cards.size >= 4).to be_truthy
+      end
+    end
+  end
+
+  describe '#play' do
+    before do
+      game.dealer_hand = dealer_hand
+    end
+
+    it 'plays the dealer hand' do
+      dealer_hand.play
+      expect(dealer_hand.played).to be_truthy
+    end
+
+    it 'pays hands' do
+      allow(game).to receive(:pay_hands)
+      dealer_hand.play
+      expect(game).to have_received(:pay_hands)
+    end
+
+    context 'when does not need to play dealer hand' do
+      before do
+        allow(game).to receive(:need_to_play_dealer_hand?).and_return(false)
+      end
+
+      it 'hides down card when no blackjack' do
+        allow(dealer_hand).to receive(:blackjack?).and_return(false)
+        dealer_hand.play
+        expect(dealer_hand.hide_down_card).to be_truthy
+      end
+
+      it 'shows down card if blackjack' do
+        allow(dealer_hand).to receive(:blackjack?).and_return(true)
+        dealer_hand.play
+        expect(dealer_hand.hide_down_card).to be_falsey
+      end
+    end
+
+    context 'when need to play dealer hand' do
+      before do
+        game.shoe = shoe
+        allow(game).to receive(:need_to_play_dealer_hand?).and_return(true)
+      end
+
+      it 'shows down card if not blackjack' do
+        allow(dealer_hand).to receive(:blackjack?).and_return(false)
+        dealer_hand.play
+        expect(dealer_hand.hide_down_card).to be_falsey
+      end
+
+      it 'shows down card if blackjack' do
+        allow(dealer_hand).to receive(:blackjack?).and_return(true)
+        dealer_hand.play
+        expect(dealer_hand.hide_down_card).to be_falsey
       end
     end
   end
