@@ -1,5 +1,9 @@
 # blackjack-ruby
 
+## Console
+
+![Blackjack](https://raw.githubusercontent.com/gdonald/blackjack-ruby/master/bj.png)
+
 ## Getting Started
 
 Install gems:
