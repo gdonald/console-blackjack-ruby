@@ -1,18 +1,14 @@
 # frozen_string_literal: true
 
+UNKNOWN = 0
+WON = 1
+LOST = 2
+PUSH = 3
+
+SOFT = 4
+HARD = 5
+
 class Hand
-  class Status
-    UNKNOWN = 0
-    WON = 1
-    LOST = 2
-    PUSH = 3
-  end
-
-  class CountMethod
-    SOFT = 0
-    HARD = 1
-  end
-
   attr_accessor :cards, :game, :played
 
   def initialize(game)

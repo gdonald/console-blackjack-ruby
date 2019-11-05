@@ -64,16 +64,16 @@ RSpec.describe Game do
     end
 
     it 'reduces the current bet to MAX_BET' do
-      game.money = Game::MAX_BET + 1
-      game.current_bet = Game::MAX_BET + 1
+      game.money = MAX_BET + 1
+      game.current_bet = MAX_BET + 1
       game.normalize_current_bet
-      expect(game.current_bet).to eq(Game::MAX_BET)
+      expect(game.current_bet).to eq(MAX_BET)
     end
 
     it 'increases the current bet to MIN_BET' do
-      game.current_bet = Game::MIN_BET - 1
+      game.current_bet = MIN_BET - 1
       game.normalize_current_bet
-      expect(game.current_bet).to eq(Game::MIN_BET)
+      expect(game.current_bet).to eq(MIN_BET)
     end
   end
 
@@ -98,7 +98,7 @@ RSpec.describe Game do
     let(:content) { "#{game.num_decks}|#{game.money}|#{game.current_bet}" }
 
     it 'opens and put save file data' do
-      allow(File).to receive(:open).with(Game::SAVE_FILE, 'w').and_yield(file)
+      allow(File).to receive(:open).with(SAVE_FILE, 'w').and_yield(file)
       allow(file).to receive(:puts)
       game.save_game
       expect(file).to have_received(:puts).with(content)
@@ -109,8 +109,8 @@ RSpec.describe Game do
     let(:content) { '8|2000|1000' }
 
     before do
-      allow(File).to receive(:readable?).with(Game::SAVE_FILE).and_return(true)
-      allow(File).to receive(:read).with(Game::SAVE_FILE).and_return(content)
+      allow(File).to receive(:readable?).with(SAVE_FILE).and_return(true)
+      allow(File).to receive(:read).with(SAVE_FILE).and_return(content)
     end
 
     it 'loads num_decks from save file data' do

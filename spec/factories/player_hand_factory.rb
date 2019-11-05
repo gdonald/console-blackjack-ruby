@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :player_hand do
     game { nil }
     bet { 500 }
-    status { Hand::Status::UNKNOWN }
+    status { UNKNOWN }
     payed { false }
     stood { false }
 

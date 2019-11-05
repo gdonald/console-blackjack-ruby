@@ -11,7 +11,7 @@ class DealerHand < Hand
   end
 
   def busted?
-    value(Hand::CountMethod::SOFT) > 21
+    value(SOFT) > 21
   end
 
   def value(count_method)
@@ -21,12 +21,12 @@ class DealerHand < Hand
 
       value = card.value + 1
       v = value > 9 ? 10 : value
-      v = 11 if count_method == Hand::CountMethod::SOFT && v == 1 && total < 11
+      v = 11 if count_method == SOFT && v == 1 && total < 11
       total += v
     end
 
-    if count_method == Hand::CountMethod::SOFT && total > 21
-      value(Hand::CountMethod::HARD)
+    if count_method == SOFT && total > 21
+      value(HARD)
     else
       total
     end
@@ -42,7 +42,7 @@ class DealerHand < Hand
       out << (index == 1 && hide_down_card ? Card.faces[13][0] : card).to_s
       out << ' '
     end
-    out << ' ⇒  ' << value(Hand::CountMethod::SOFT).to_s
+    out << ' ⇒  ' << value(SOFT).to_s
   end
 
   def deal_required_cards
@@ -55,7 +55,7 @@ class DealerHand < Hand
   end
 
   def both_values
-    [value(Hand::CountMethod::SOFT), value(Hand::CountMethod::HARD)]
+    [value(SOFT), value(HARD)]
   end
 
   def play

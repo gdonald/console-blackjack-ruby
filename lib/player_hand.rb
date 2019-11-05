@@ -10,13 +10,13 @@ class PlayerHand < Hand
   def initialize(game, bet)
     super(game)
     @bet = bet
-    @status = Hand::Status::UNKNOWN
+    @status = UNKNOWN
     @payed = false
     @stood = false
   end
 
   def busted?
-    value(Hand::CountMethod::SOFT) > 21
+    value(SOFT) > 21
   end
 
   def value(count_method)
@@ -24,24 +24,24 @@ class PlayerHand < Hand
     cards.each do |card|
       value = card.value + 1
       v = value > 9 ? 10 : value
-      v = 11 if count_method == Hand::CountMethod::SOFT && v == 1 && total < 11
+      v = 11 if count_method == SOFT && v == 1 && total < 11
       total += v
     end
 
-    return value(Hand::CountMethod::HARD) if count_method == Hand::CountMethod::SOFT && total > 21
+    return value(HARD) if count_method == SOFT && total > 21
 
     total
   end
 
   def done?
     if played || stood || blackjack? || busted? ||
-       value(Hand::CountMethod::SOFT) == 21 ||
-       value(Hand::CountMethod::HARD) == 21
+       value(SOFT) == 21 ||
+       value(HARD) == 21
       self.played = true
 
       if !payed && busted?
         self.payed = true
-        self.status = Hand::Status::LOST
+        self.status = LOST
         game.money -= bet
       end
       return true
@@ -69,7 +69,7 @@ class PlayerHand < Hand
   end
 
   def can_hit?
-    !(played || stood || value(Hand::CountMethod::HARD) == 21 || blackjack? || busted?)
+    !(played || stood || value(HARD) == 21 || blackjack? || busted?)
   end
 
   def hit
@@ -118,11 +118,11 @@ class PlayerHand < Hand
       out << "#{card} "
     end
 
-    out << ' ⇒  ' << value(Hand::CountMethod::SOFT).to_s << '  '
+    out << ' ⇒  ' << value(SOFT).to_s << '  '
 
-    if status == Hand::Status::LOST
+    if status == LOST
       out << '-'
-    elsif status == Hand::Status::WON
+    elsif status == WON
       out << '+'
     end
 
@@ -130,11 +130,11 @@ class PlayerHand < Hand
     out << ' ⇐' if !played && index == game.current_hand
     out << '  '
 
-    if status == Hand::Status::LOST
+    if status == LOST
       out << (busted? ? 'Busted!' : 'Lose!')
-    elsif status == Hand::Status::WON
+    elsif status == WON
       out << (blackjack? ? 'Blackjack!' : 'Won!')
-    elsif status == Hand::Status::PUSH
+    elsif status == PUSH
       out << 'Push'
     end
 

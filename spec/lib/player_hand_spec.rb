@@ -26,7 +26,7 @@ RSpec.describe PlayerHand do
     end
 
     it 'has an unknown status' do
-      expect(player_hand.status).to eq(Hand::Status::UNKNOWN)
+      expect(player_hand.status).to eq(UNKNOWN)
     end
 
     it 'has not been payed' do
@@ -49,19 +49,19 @@ RSpec.describe PlayerHand do
     context 'with a soft count' do
       it 'returns 21' do
         player_hand.cards << ten << ace
-        expect(player_hand.value(Hand::CountMethod::SOFT)).to eq(21)
+        expect(player_hand.value(SOFT)).to eq(21)
       end
 
       it 'returns 12' do
         player_hand.cards << ten << ace << ace
-        expect(player_hand.value(Hand::CountMethod::SOFT)).to eq(12)
+        expect(player_hand.value(SOFT)).to eq(12)
       end
     end
 
     context 'with a hard count' do
       it 'returns 11' do
         player_hand.cards << ten << ace
-        expect(player_hand.value(Hand::CountMethod::HARD)).to eq(11)
+        expect(player_hand.value(HARD)).to eq(11)
       end
     end
   end
@@ -281,21 +281,21 @@ RSpec.describe PlayerHand do
 
     it 'draws a lost hand' do
       player_hand.cards << ace << ace
-      player_hand.status = Hand::Status::LOST
+      player_hand.status = LOST
       expected = " 🂡 🂡  ⇒  12  -$5.00  Lose!\n\n"
       expect(player_hand.draw(1)).to eq(expected)
     end
 
     it 'draws a won hand' do
       player_hand.cards << ace << ace
-      player_hand.status = Hand::Status::WON
+      player_hand.status = WON
       expected = " 🂡 🂡  ⇒  12  +$5.00  Won!\n\n"
       expect(player_hand.draw(1)).to eq(expected)
     end
 
     it 'draws a push hand' do
       player_hand.cards << ace << ace
-      player_hand.status = Hand::Status::PUSH
+      player_hand.status = PUSH
       expected = " 🂡 🂡  ⇒  12  $5.00  Push\n\n"
       expect(player_hand.draw(1)).to eq(expected)
     end

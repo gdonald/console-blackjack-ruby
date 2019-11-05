@@ -4,11 +4,11 @@ require_relative 'shoe'
 require_relative 'dealer_hand'
 require_relative 'player_hand'
 
-class Game
-  SAVE_FILE = 'bj.txt'
-  MIN_BET = 500
-  MAX_BET = 10_000_000
+SAVE_FILE = 'bj.txt'
+MIN_BET = 500
+MAX_BET = 10_000_000
 
+class Game
   attr_accessor :shoe, :money, :player_hands, :dealer_hand, :num_decks, :current_bet, :current_hand
 
   def initialize
@@ -86,33 +86,33 @@ class Game
   end
 
   def normalize_current_bet
-    if current_bet < Game::MIN_BET
-      self.current_bet = Game::MIN_BET
-    elsif current_bet > Game::MAX_BET
-      self.current_bet = Game::MAX_BET
+    if current_bet < MIN_BET
+      self.current_bet = MIN_BET
+    elsif current_bet > MAX_BET
+      self.current_bet = MAX_BET
     end
 
     self.current_bet = money if current_bet > money
   end
 
   def pay_hands
-    dhv = dealer_hand.value(Hand::CountMethod::SOFT)
+    dhv = dealer_hand.value(SOFT)
     dhb = dealer_hand.busted?
 
     player_hands.each do |player_hand|
       next if player_hand.payed
 
       player_hand.payed = true
-      phv = player_hand.value(Hand::CountMethod::SOFT)
+      phv = player_hand.value(SOFT)
       if dhb || phv > dhv
         player_hand.bet *= 1.5 if player_hand.blackjack?
         self.money += player_hand.bet
-        player_hand.status = Hand::Status::WON
+        player_hand.status = WON
       elsif phv < dhv
         self.money -= player_hand.bet
-        player_hand.status = Hand::Status::LOST
+        player_hand.status = LOST
       else
-        player_hand.status = Hand::Status::PUSH
+        player_hand.status = PUSH
       end
     end
 
@@ -265,7 +265,7 @@ class Game
     player_hand.bet /= 2
     player_hand.played = true
     player_hand.payed = true
-    player_hand.status = Hand::Status::LOST
+    player_hand.status = LOST
 
     self.money -= player_hand.bet
 
