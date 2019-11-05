@@ -44,4 +44,88 @@ RSpec.describe Game do
       expect(game.all_bets).to eq(1000)
     end
   end
+
+  describe '#need_to_play_dealer_hand?' do
+    it 'returns false' do
+      expect(game).to_not be_need_to_play_dealer_hand
+    end
+
+    it 'returns true' do
+      game.player_hands << player_hand
+      expect(game).to be_need_to_play_dealer_hand
+    end
+  end
+
+  describe '#normalize_current_bet' do
+    it 'reduces the current bet to money' do
+      game.current_bet = game.money + 1
+      game.normalize_current_bet
+      expect(game.current_bet).to eq(game.money)
+    end
+
+    it 'reduces the current bet to MAX_BET' do
+      game.money = Game::MAX_BET + 1
+      game.current_bet = Game::MAX_BET + 1
+      game.normalize_current_bet
+      expect(game.current_bet).to eq(Game::MAX_BET)
+    end
+
+    it 'increases the current bet to MIN_BET' do
+      game.current_bet = Game::MIN_BET - 1
+      game.normalize_current_bet
+      expect(game.current_bet).to eq(Game::MIN_BET)
+    end
+  end
+
+  describe '#clear' do
+    it 'calls system' do
+      ENV['CLEAR_TERM'] = '1'
+      allow(game).to receive(:system)
+      game.clear
+      expect(game).to have_received(:system).with('export TERM=linux; clear')
+    end
+
+    it 'does not call system' do
+      ENV['CLEAR_TERM'] = '0'
+      allow(game).to receive(:system)
+      game.clear
+      expect(game).to_not have_received(:system)
+    end
+  end
+
+  describe '#save_game' do
+    let(:file) { instance_double('File') }
+    let(:content) { "#{game.num_decks}|#{game.money}|#{game.current_bet}" }
+
+    it 'opens and put save file data' do
+      allow(File).to receive(:open).with(Game::SAVE_FILE, 'w').and_yield(file)
+      allow(file).to receive(:puts)
+      game.save_game
+      expect(file).to have_received(:puts).with(content)
+    end
+  end
+
+  describe '#load_game' do
+    let(:content) { '8|2000|1000' }
+
+    before do
+      allow(File).to receive(:readable?).with(Game::SAVE_FILE).and_return(true)
+      allow(File).to receive(:read).with(Game::SAVE_FILE).and_return(content)
+    end
+
+    it 'loads num_decks from save file data' do
+      game.load_game
+      expect(game.num_decks).to eq(8)
+    end
+
+    it 'loads money from save file data' do
+      game.load_game
+      expect(game.money).to eq(2000)
+    end
+
+    it 'loads current_bet from save file data' do
+      game.load_game
+      expect(game.current_bet).to eq(1000)
+    end
+  end
 end

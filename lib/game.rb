@@ -37,10 +37,10 @@ class Game
 
     self.dealer_hand = DealerHand.new(self)
 
-    player_hand.deal_card
-    dealer_hand.deal_card
-    dealer_hand.deal_card
-    player_hand.deal_card
+    2.times do
+      player_hand.deal_card
+      dealer_hand.deal_card
+    end
 
     if dealer_hand.upcard_is_ace? && !player_hand.blackjack?
       draw_hands
@@ -78,31 +78,7 @@ class Game
     current_player_hand.action?
   end
 
-  def play_dealer_hand
-    dealer_hand.hide_down_card = false if dealer_hand.blackjack?
-
-    unless need_to_play_dealer_hand
-      dealer_hand.played = true
-      pay_hands
-      return
-    end
-
-    dealer_hand.hide_down_card = false
-
-    soft_count = dealer_hand.value(Hand::CountMethod::SOFT)
-    hard_count = dealer_hand.value(Hand::CountMethod::HARD)
-
-    while soft_count < 18 && hard_count < 17
-      dealer_hand.deal_card
-      soft_count = dealer_hand.value(Hand::CountMethod::SOFT)
-      hard_count = dealer_hand.value(Hand::CountMethod::HARD)
-    end
-
-    dealer_hand.played = true
-    pay_hands
-  end
-
-  def need_to_play_dealer_hand
+  def need_to_play_dealer_hand?
     player_hands.each do |player_hand|
       return true unless player_hand.busted? || player_hand.blackjack?
     end
@@ -311,13 +287,17 @@ class Game
     player_hand = current_player_hand
     if player_hand.done?
       play_dealer_hand
-      draw_hands
-      draw_bet_options
       return
     end
 
     draw_hands
     player_hand.action?
+  end
+
+  def play_dealer_hand
+    dealer_hand.play
+    draw_hands
+    draw_bet_options
   end
 
   def split_current_hand
@@ -327,7 +307,7 @@ class Game
       return
     end
 
-    self.player_hands << PlayerHand.new(self, current_bet)
+    player_hands << PlayerHand.new(self, current_bet)
 
     x = player_hands.size - 1
     while x > current_hand

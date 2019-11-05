@@ -101,8 +101,6 @@ class PlayerHand < Hand
     end
 
     game.play_dealer_hand
-    game.draw_hands
-    game.draw_bet_options
   end
 
   def process
@@ -112,8 +110,6 @@ class PlayerHand < Hand
     end
 
     game.play_dealer_hand
-    game.draw_hands
-    game.draw_bet_options
   end
 
   def draw(index)

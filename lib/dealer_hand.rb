@@ -42,7 +42,27 @@ class DealerHand < Hand
       out << (index == 1 && hide_down_card ? Card.faces[13][0] : card).to_s
       out << ' '
     end
-    out << ' ⇒  '
-    out << value(Hand::CountMethod::SOFT).to_s
+    out << ' ⇒  ' << value(Hand::CountMethod::SOFT).to_s
+  end
+
+  def deal_required_cards
+    soft, hard = both_values
+
+    while soft < 18 && hard < 17
+      deal_card
+      soft, hard = both_values
+    end
+  end
+
+  def both_values
+    [value(Hand::CountMethod::SOFT), value(Hand::CountMethod::HARD)]
+  end
+
+  def play
+    playing = game.need_to_play_dealer_hand?
+    self.hide_down_card = false if blackjack? || playing
+    deal_required_cards if playing
+    self.played = true
+    game.pay_hands
   end
 end
