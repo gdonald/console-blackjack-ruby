@@ -13,6 +13,10 @@ FactoryBot.define do
       value { 1 }
     end
 
+    trait :five do
+      value { 4 }
+    end
+
     trait :six do
       value { 5 }
     end

@@ -4,6 +4,7 @@ RSpec.describe DealerHand do
   let(:game) { build(:game) }
   let(:dealer_hand) { build(:dealer_hand, game: game) }
   let(:ace) { build(:card, :ace) }
+  let(:five) { build(:card, :five) }
   let(:six) { build(:card, :six) }
   let(:seven) { build(:card, :seven) }
   let(:eight) { build(:card, :eight) }
@@ -94,6 +95,62 @@ RSpec.describe DealerHand do
       dealer_hand.hide_down_card = false
       expected = ' 🂡 🂪  ⇒  21'
       expect(dealer_hand.draw).to eq(expected)
+    end
+  end
+
+  describe '#both_values' do
+    context 'with a soft count' do
+      it 'returns [10, 10]' do
+        dealer_hand.cards << ten << ace
+        expect(dealer_hand.both_values).to eq([10, 10])
+      end
+
+      it 'returns [11, 1]' do
+        dealer_hand.cards << ace << ten
+        expect(dealer_hand.both_values).to eq([11, 1])
+      end
+
+      it 'returns [12, 12]' do
+        dealer_hand.cards << ten << ace << ace
+        dealer_hand.hide_down_card = false
+        expect(dealer_hand.both_values).to eq([12, 12])
+      end
+    end
+
+    context 'with a hard count' do
+      it 'returns [10, 10]' do
+        dealer_hand.cards << ten << ace
+        expect(dealer_hand.both_values).to eq([10, 10])
+      end
+
+      it 'returns [11, 1]' do
+        dealer_hand.cards << ace << ten
+        expect(dealer_hand.both_values).to eq([11, 1])
+      end
+    end
+  end
+
+  describe '#deal_required_cards' do
+    let(:shoe) { build(:shoe, :new_regular) }
+
+    before do
+      game.shoe = shoe
+    end
+
+    context 'when soft is < 18' do
+      it 'deals cards' do
+        dealer_hand.cards << ace << seven
+        dealer_hand.deal_required_cards
+        expect(dealer_hand.cards.size >= 3).to be_truthy
+      end
+    end
+
+    context 'when hard is < 17' do
+      it 'deals cards' do
+        dealer_hand.cards << ace << ten << five
+        dealer_hand.deal_required_cards
+        expect(dealer_hand.cards.size >= 4).to be_truthy
+      end
     end
   end
 end
