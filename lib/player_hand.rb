@@ -94,22 +94,15 @@ class PlayerHand < Hand
   def stand
     self.stood = true
     self.played = true
-
-    if game.more_hands_to_play?
-      game.play_more_hands
-      return
-    end
-
-    game.play_dealer_hand
+    process
   end
 
   def process
     if game.more_hands_to_play?
       game.play_more_hands
-      return
+    else
+      game.play_dealer_hand
     end
-
-    game.play_dealer_hand
   end
 
   def draw(index)

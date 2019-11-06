@@ -187,6 +187,12 @@ RSpec.describe DealerHand do
         dealer_hand.play
         expect(dealer_hand.hide_down_card).to be_falsey
       end
+
+      it 'does not deal any cards' do
+        allow(dealer_hand).to receive(:deal_required_cards)
+        dealer_hand.play
+        expect(dealer_hand).to_not have_received(:deal_required_cards)
+      end
     end
 
     context 'when need to play dealer hand' do
@@ -205,6 +211,12 @@ RSpec.describe DealerHand do
         allow(dealer_hand).to receive(:blackjack?).and_return(true)
         dealer_hand.play
         expect(dealer_hand.hide_down_card).to be_falsey
+      end
+
+      it 'deals required cards' do
+        allow(dealer_hand).to receive(:deal_required_cards)
+        dealer_hand.play
+        expect(dealer_hand).to have_received(:deal_required_cards)
       end
     end
   end

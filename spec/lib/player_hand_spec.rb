@@ -5,6 +5,7 @@ RSpec.describe PlayerHand do
   let(:shoe) { build(:shoe, :new_regular) }
   let(:game) { build(:game, shoe: shoe) }
   let(:player_hand) { build(:player_hand, game: game) }
+  let(:dealer_hand) { build(:dealer_hand, game: game) }
   let(:ace) { build(:card, :ace) }
   let(:six) { build(:card, :six) }
   let(:seven) { build(:card, :seven) }
@@ -300,35 +301,197 @@ RSpec.describe PlayerHand do
       expect(player_hand.draw(1)).to eq(expected)
     end
   end
-  
-  # describe '#hit' do
-  #   context 'when not done' do
-  #     it 'adds a card to the hand' do
-  #       allow(game).to receive(:draw_hands)
-  #       allow(game).to receive(:current_player_hand) { player_hand }
-  #       allow(player_hand).to receive(:action?)
-  #       expect { player_hand.hit }.to change { player_hand.cards.size }.by(1)
-  #     end
-  #   end
-  #
-  #   context 'when done' do
-  #     let(:dealer_hand) { build(:dealer_hand, game: game) }
-  #
-  #     it 'adds a card to the hand' do
-  #       game.dealer_hand = dealer_hand
-  #       allow(player_hand).to receive(:done?).and_return(true)
-  #       allow(STDIN).to receive(:getc).and_return('q')
-  #       expect { player_hand.hit }.to change { player_hand.cards.size }.by(1)
-  #     end
-  #   end
-  # end
-  #
-  # describe '#dbl' do
-  #   it 'adds a card, doubles the bet, ends the hand' do
-  #     # game.dealer_hand = dealer_hand
-  #     # allow(player_hand).to receive(:done?).and_return(true)
-  #     # allow(STDIN).to receive(:getc).and_return('q')
-  #     expect { player_hand.dbl }.to change { player_hand.cards.size }.by(1)
-  #   end
-  # end
+
+  describe '#process' do
+    context 'with more hands to play' do
+      before do
+        allow(game).to receive(:more_hands_to_play?).and_return(true)
+        allow(game).to receive(:play_more_hands)
+      end
+
+      it 'plays more hands' do
+        player_hand.process
+        expect(game).to have_received(:play_more_hands)
+      end
+    end
+
+    context 'with no more hands to play' do
+      before do
+        allow(game).to receive(:more_hands_to_play?).and_return(false)
+        allow(game).to receive(:play_dealer_hand)
+      end
+
+      it 'plays dealer hand' do
+        player_hand.process
+        expect(game).to have_received(:play_dealer_hand)
+      end
+    end
+  end
+
+  describe '#hit' do
+    before do
+      game.dealer_hand = dealer_hand
+    end
+
+    context 'when done' do
+      let(:dealer_hand) { build(:dealer_hand, game: game) }
+
+      before do
+        allow(player_hand).to receive(:done?).and_return(true)
+        allow(player_hand).to receive(:process)
+      end
+
+      it 'adds a card to the hand' do
+        expect { player_hand.hit }.to change { player_hand.cards.size }.by(1)
+      end
+    end
+
+    context 'when not done' do
+      before do
+        allow(player_hand).to receive(:done?).and_return(false)
+        allow(game).to receive(:current_player_hand).and_return(player_hand)
+        allow(player_hand).to receive(:action?)
+        allow(game).to receive(:draw_hands)
+      end
+
+      it 'adds a card to the hand' do
+        expect { player_hand.hit }.to change { player_hand.cards.size }.by(1)
+      end
+    end
+  end
+
+  describe '#dbl' do
+    before do
+      game.dealer_hand = dealer_hand
+      allow(game).to receive(:draw_hands)
+      allow(game).to receive(:draw_bet_options)
+      allow(player_hand).to receive(:process)
+    end
+
+    context 'when done' do
+      before do
+        allow(player_hand).to receive(:done?).and_return(true)
+        player_hand.dbl
+      end
+
+      it 'adds a card to the hand' do
+        expect(player_hand.cards.size).to eq(1)
+      end
+
+      it 'sets hand to played' do
+        expect(player_hand.played).to be_truthy
+      end
+
+      it 'doubles the bet' do
+        expect(player_hand.bet).to eq(1000)
+      end
+
+      it 'calls process' do
+        expect(player_hand).to have_received(:process)
+      end
+    end
+
+    context 'when not done' do
+      before do
+        allow(player_hand).to receive(:done?).and_return(false)
+        player_hand.dbl
+      end
+
+      it 'does not call process' do
+        expect(player_hand).to_not have_received(:process)
+      end
+    end
+  end
+
+  describe '#stand' do
+    before do
+      allow(player_hand).to receive(:process)
+      allow(game).to receive(:draw_hands)
+      allow(game).to receive(:draw_bet_options)
+      game.dealer_hand = dealer_hand
+      player_hand.stand
+    end
+
+    it 'sets the hand as stood' do
+      expect(player_hand.stood).to be_truthy
+    end
+
+    it 'sets the hand as played' do
+      expect(player_hand.played).to be_truthy
+    end
+
+    it 'calls process' do
+      expect(player_hand).to have_received(:process)
+    end
+  end
+
+  describe '#action?' do
+    before do
+      player_hand.cards << ace << ace
+      game.player_hands << player_hand
+      game.dealer_hand = dealer_hand
+      allow(player_hand).to receive(:puts)
+    end
+
+    context 'when standing' do
+      before do
+        allow(Game).to receive(:getc).and_return('s', 'q')
+        allow(player_hand).to receive(:stand)
+      end
+
+      it 'stands the hand' do
+        player_hand.action?
+        expect(player_hand).to have_received(:stand)
+      end
+    end
+
+    context 'when hitting' do
+      before do
+        allow(Game).to receive(:getc).and_return('h', 'q')
+        allow(player_hand).to receive(:hit)
+      end
+
+      it 'hits the hand' do
+        player_hand.action?
+        expect(player_hand).to have_received(:hit)
+      end
+    end
+
+    context 'when doubling' do
+      before do
+        allow(Game).to receive(:getc).and_return('d', 'q')
+        allow(player_hand).to receive(:dbl)
+      end
+
+      it 'doubles the hand' do
+        player_hand.action?
+        expect(player_hand).to have_received(:dbl)
+      end
+    end
+
+    context 'when splitting' do
+      before do
+        allow(Game).to receive(:getc).and_return('p', 'q')
+        allow(game).to receive(:split_current_hand)
+      end
+
+      it 'splits the hand' do
+        player_hand.action?
+        expect(game).to have_received(:split_current_hand)
+      end
+    end
+
+    context 'when invalid input' do
+      before do
+        allow(Game).to receive(:getc).and_return('x', 's', 'q') # ?, split, quit
+        allow(game).to receive(:clear)
+        allow(game).to receive(:draw_hands)
+        allow(game).to receive(:puts)
+      end
+
+      it 'gets the action again' do
+        expect { player_hand.action? }.to raise_error(SystemExit)
+      end
+    end
+  end
 end
