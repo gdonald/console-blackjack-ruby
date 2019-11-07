@@ -29,7 +29,24 @@ class Game
 
   def deal_new_hand
     shoe.new_regular if shoe.needs_to_shuffle?
+    build_new_hand
 
+    if dealer_hand.upcard_is_ace? && !player_hand.blackjack?
+      draw_hands
+      ask_insurance
+    elsif player_hand.done?
+      dealer_hand.hide_down_card = false
+      pay_hands
+      draw_hands
+      draw_bet_options
+    else
+      draw_hands
+      player_hand.action?
+      save_game
+    end
+  end
+
+  def build_new_hand
     self.player_hands = []
     player_hand = PlayerHand.new(self, current_bet)
     player_hands << player_hand
@@ -41,24 +58,6 @@ class Game
       player_hand.deal_card
       dealer_hand.deal_card
     end
-
-    if dealer_hand.upcard_is_ace? && !player_hand.blackjack?
-      draw_hands
-      ask_insurance
-      return
-    end
-
-    if player_hand.done?
-      dealer_hand.hide_down_card = false
-      player_hands
-      draw_hands
-      draw_bet_options
-      return
-    end
-
-    draw_hands
-    player_hand.action?
-    save_game
   end
 
   def more_hands_to_play?

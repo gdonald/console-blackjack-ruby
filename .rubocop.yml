@@ -26,3 +26,5 @@ Metrics/PerceivedComplexity:
 Metrics/LineLength:
   Exclude:
     - 'lib/**/*.rb'
+RSpec/MultipleExpectations:
+  Enabled: false

@@ -4,6 +4,7 @@ RSpec.describe Game do
   let(:shoe) { build(:shoe, :new_regular) }
   let(:game) { build(:game, shoe: shoe) }
   let(:player_hand) { build(:player_hand, game: game) }
+  let(:dealer_hand) { build(:dealer_hand, game: game) }
 
   describe '#current_player_hand' do
     it 'returns the current hand' do
@@ -149,6 +150,75 @@ RSpec.describe Game do
     it 'deals a new hand' do
       game.run
       expect(game).to have_received(:deal_new_hand)
+    end
+  end
+
+  describe '#draw_bet_options' do
+    before do
+      allow(game).to receive(:puts)
+    end
+
+    context 'when dealing a new hand' do
+      it 'deals a new hand' do
+        allow(described_class).to receive(:getc).and_return('d')
+        allow(game).to receive(:deal_new_hand)
+        game.draw_bet_options
+        expect(game).to have_received(:deal_new_hand)
+      end
+    end
+
+    context 'when updating current bet' do
+      it 'deals a new hand' do
+        allow(described_class).to receive(:getc).and_return('b')
+        allow(game).to receive(:new_bet)
+        game.draw_bet_options
+        expect(game).to have_received(:new_bet)
+      end
+    end
+
+    context 'when updating game options' do
+      before do
+        game.dealer_hand = dealer_hand
+        allow(described_class).to receive(:getc).and_return('o')
+      end
+
+      it 'draws game options' do
+        allow(game).to receive(:draw_game_options)
+        game.draw_bet_options
+        expect(game).to have_received(:draw_game_options)
+      end
+
+      it 'draws hands' do
+        allow(game).to receive(:draw_game_options)
+        allow(game).to receive(:draw_hands)
+        game.draw_bet_options
+        expect(game).to have_received(:draw_hands)
+      end
+
+      it 'clears the screen' do
+        allow(game).to receive(:draw_game_options)
+        allow(game).to receive(:draw_hands)
+        allow(game).to receive(:clear)
+        game.draw_bet_options
+        expect(game).to have_received(:clear)
+      end
+    end
+
+    context 'when quitting' do
+      it 'clears the screen and exits' do
+        allow(described_class).to receive(:getc).and_return('q')
+        allow(game).to receive(:clear)
+        expect { game.draw_bet_options }.to raise_error(SystemExit)
+        expect(game).to have_received(:clear)
+      end
+    end
+
+    context 'when invalid input' do
+      it 'gets the action again' do
+        game.dealer_hand = dealer_hand
+        allow(described_class).to receive(:getc).and_return('x', 'q') # ?, quit
+        expect { game.draw_bet_options }.to raise_error(SystemExit)
+      end
     end
   end
 end
