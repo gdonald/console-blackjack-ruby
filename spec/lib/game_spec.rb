@@ -128,4 +128,27 @@ RSpec.describe Game do
       expect(game.current_bet).to eq(1000)
     end
   end
+
+  describe '#run' do
+    before do
+      allow(game).to receive(:load_game)
+      allow(game).to receive(:deal_new_hand)
+      allow(Shoe).to receive(:new)
+    end
+
+    it 'calls load_game' do
+      game.run
+      expect(game).to have_received(:load_game)
+    end
+
+    it 'creates a new shoe' do
+      game.run
+      expect(Shoe).to have_received(:new)
+    end
+
+    it 'deals a new hand' do
+      game.run
+      expect(game).to have_received(:deal_new_hand)
+    end
+  end
 end
