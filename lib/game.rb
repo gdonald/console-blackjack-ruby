@@ -27,9 +27,24 @@ class Game
     player_hands[current_hand]
   end
 
+  def build_new_hand
+    self.player_hands = []
+    player_hand = PlayerHand.new(self, current_bet)
+    player_hands << player_hand
+    self.current_hand = 0
+
+    self.dealer_hand = DealerHand.new(self)
+
+    2.times do
+      player_hand.deal_card
+      dealer_hand.deal_card
+    end
+    player_hand
+  end
+
   def deal_new_hand
     shoe.new_regular if shoe.needs_to_shuffle?
-    build_new_hand
+    player_hand = build_new_hand
 
     if dealer_hand.upcard_is_ace? && !player_hand.blackjack?
       draw_hands
@@ -46,35 +61,20 @@ class Game
     end
   end
 
-  def build_new_hand
-    self.player_hands = []
-    player_hand = PlayerHand.new(self, current_bet)
-    player_hands << player_hand
-    self.current_hand = 0
-
-    self.dealer_hand = DealerHand.new(self)
-
-    2.times do
-      player_hand.deal_card
-      dealer_hand.deal_card
-    end
-  end
-
   def more_hands_to_play?
     current_hand < player_hands.size - 1
   end
 
   def play_more_hands
     self.current_hand += 1
-
     current_player_hand.deal_card
+
     if current_player_hand.done?
       current_player_hand.process
-      return
+    else
+      draw_hands
+      current_player_hand.action?
     end
-
-    draw_hands
-    current_player_hand.action?
   end
 
   def need_to_play_dealer_hand?
@@ -95,24 +95,11 @@ class Game
   end
 
   def pay_hands
-    dhv = dealer_hand.value(SOFT)
-    dhb = dealer_hand.busted?
+    dealer_hand_value = dealer_hand.value(SOFT)
+    dealer_busted = dealer_hand.busted?
 
     player_hands.each do |player_hand|
-      next if player_hand.payed
-
-      player_hand.payed = true
-      phv = player_hand.value(SOFT)
-      if dhb || phv > dhv
-        player_hand.bet *= 1.5 if player_hand.blackjack?
-        self.money += player_hand.bet
-        player_hand.status = WON
-      elsif phv < dhv
-        self.money -= player_hand.bet
-        player_hand.status = LOST
-      else
-        player_hand.status = PUSH
-      end
+      player_hand.pay(dealer_hand_value, dealer_busted)
     end
 
     normalize_current_bet

@@ -17,6 +17,10 @@ class Hand
     @cards = []
   end
 
+  def busted?
+    value(SOFT) > 21
+  end
+
   def deal_card
     cards << game.shoe.next_card
   end

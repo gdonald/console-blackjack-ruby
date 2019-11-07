@@ -494,4 +494,8 @@ RSpec.describe PlayerHand do
       end
     end
   end
+
+  describe '#pay' do
+
+  end
 end

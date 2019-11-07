@@ -10,10 +10,6 @@ class DealerHand < Hand
     @hide_down_card = true
   end
 
-  def busted?
-    value(SOFT) > 21
-  end
-
   def value(count_method)
     total = 0
     cards.each_with_index do |card, index|
