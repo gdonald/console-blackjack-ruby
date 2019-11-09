@@ -5,6 +5,9 @@ SimpleCov.start do
   add_filter %r{/spec/}
 end
 
+require 'coveralls'
+Coveralls.wear!
+
 Dir.glob(File.join(File.dirname(__FILE__),
                    '..' + File::SEPARATOR + 'lib', '**',
                    '*.rb'), &method(:require))
