@@ -21,6 +21,7 @@ Run:
 ## Status
 
 [![Build Status](https://travis-ci.org/gdonald/blackjack-ruby.svg?branch=master)](https://travis-ci.org/gdonald/blackjack-ruby)
+[![Coverage Status](https://coveralls.io/repos/github/gdonald/blackjack-ruby/badge.svg?branch=master)](https://coveralls.io/github/gdonald/blackjack-ruby?branch=master)
 
 ## License
 
