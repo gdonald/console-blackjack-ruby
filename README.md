@@ -2,26 +2,22 @@
 
 ## Console
 
-![Blackjack](https://raw.githubusercontent.com/gdonald/blackjack-ruby/master/bj.png)
+![Blackjack](https://raw.githubusercontent.com/gdonald/console-blackjack-ruby/master/bj.png)
 
 ## Getting Started
 
 Install gems:
 
-    bundle install
-
-Run tests:
-
-    rake
+    gem install console-blackjack
 
 Run:
 
-    ruby blackjack.rb
+    console-blackjack
 
 ## Status
 
-[![Build Status](https://travis-ci.org/gdonald/blackjack-ruby.svg?branch=master)](https://travis-ci.org/gdonald/blackjack-ruby)
-[![Coverage Status](https://coveralls.io/repos/github/gdonald/blackjack-ruby/badge.svg?branch=master)](https://coveralls.io/github/gdonald/blackjack-ruby?branch=master)
+[![Build Status](https://travis-ci.org/gdonald/console-blackjack-ruby.svg?branch=master)](https://travis-ci.org/gdonald/console-blackjack-ruby)
+[![Coverage Status](https://coveralls.io/repos/github/gdonald/console-blackjack-ruby/badge.svg?branch=master)](https://coveralls.io/github/gdonald/console-blackjack-ruby?branch=master)
 
 ## License
 
