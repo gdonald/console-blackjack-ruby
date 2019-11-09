@@ -1,12 +1,10 @@
-# blackjack-ruby
-
-## Console
+# console-blackjack-ruby
 
 ![Blackjack](https://raw.githubusercontent.com/gdonald/console-blackjack-ruby/master/bj.png)
 
 ## Getting Started
 
-Install gems:
+Install:
 
     gem install console-blackjack
 
