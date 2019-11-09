@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :game do
+  factory :blackjack do
     shoe { nil }
     money { 10_000 }
     player_hands { [] }

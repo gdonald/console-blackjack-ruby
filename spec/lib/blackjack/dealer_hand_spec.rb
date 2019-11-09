@@ -2,8 +2,8 @@
 
 RSpec.describe DealerHand do
   let(:shoe) { build(:shoe, :new_regular) }
-  let(:game) { build(:game) }
-  let(:dealer_hand) { build(:dealer_hand, game: game) }
+  let(:blackjack) { build(:blackjack) }
+  let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
   let(:ace) { build(:card, :ace) }
   let(:five) { build(:card, :five) }
   let(:six) { build(:card, :six) }
@@ -17,8 +17,8 @@ RSpec.describe DealerHand do
       expect(dealer_hand).to be
     end
 
-    it 'has a game' do
-      expect(dealer_hand.game).to eq(game)
+    it 'has a blackjack' do
+      expect(dealer_hand.blackjack).to eq(blackjack)
     end
   end
 
@@ -135,7 +135,7 @@ RSpec.describe DealerHand do
     let(:shoe) { build(:shoe, :new_regular) }
 
     before do
-      game.shoe = shoe
+      blackjack.shoe = shoe
     end
 
     context 'when soft is < 18' do
@@ -157,7 +157,7 @@ RSpec.describe DealerHand do
 
   describe '#play' do
     before do
-      game.dealer_hand = dealer_hand
+      blackjack.dealer_hand = dealer_hand
     end
 
     it 'plays the dealer hand' do
@@ -166,14 +166,14 @@ RSpec.describe DealerHand do
     end
 
     it 'pays hands' do
-      allow(game).to receive(:pay_hands)
+      allow(blackjack).to receive(:pay_hands)
       dealer_hand.play
-      expect(game).to have_received(:pay_hands)
+      expect(blackjack).to have_received(:pay_hands)
     end
 
     context 'when does not need to play dealer hand' do
       before do
-        allow(game).to receive(:need_to_play_dealer_hand?).and_return(false)
+        allow(blackjack).to receive(:need_to_play_dealer_hand?).and_return(false)
       end
 
       it 'hides down card when no blackjack' do
@@ -197,8 +197,8 @@ RSpec.describe DealerHand do
 
     context 'when need to play dealer hand' do
       before do
-        game.shoe = shoe
-        allow(game).to receive(:need_to_play_dealer_hand?).and_return(true)
+        blackjack.shoe = shoe
+        allow(blackjack).to receive(:need_to_play_dealer_hand?).and_return(true)
       end
 
       it 'shows down card if not blackjack' do

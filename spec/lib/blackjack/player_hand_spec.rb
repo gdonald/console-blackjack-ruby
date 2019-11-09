@@ -3,9 +3,9 @@
 
 RSpec.describe PlayerHand do
   let(:shoe) { build(:shoe, :new_regular) }
-  let(:game) { build(:game, shoe: shoe) }
-  let(:player_hand) { build(:player_hand, game: game) }
-  let(:dealer_hand) { build(:dealer_hand, game: game) }
+  let(:blackjack) { build(:blackjack, shoe: shoe) }
+  let(:player_hand) { build(:player_hand, blackjack: blackjack) }
+  let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
   let(:ace) { build(:card, :ace) }
   let(:six) { build(:card, :six) }
   let(:seven) { build(:card, :seven) }
@@ -18,8 +18,8 @@ RSpec.describe PlayerHand do
       expect(player_hand).to be
     end
 
-    it 'has a game' do
-      expect(player_hand.game).to eq(game)
+    it 'has a blackjack' do
+      expect(player_hand.blackjack).to eq(blackjack)
     end
 
     it 'has a bet' do
@@ -128,14 +128,14 @@ RSpec.describe PlayerHand do
 
     context 'when MAX_PLAYER_HANDS' do
       it 'returns false' do
-        6.times { game.player_hands << build(:player_hand) }
+        6.times { blackjack.player_hands << build(:player_hand) }
         expect(player_hand).to_not be_can_split
       end
     end
 
     context 'when not enough money' do
       it 'returns false' do
-        game.money = 9999
+        blackjack.money = 9999
         expect(player_hand).to_not be_can_split
       end
     end
@@ -165,7 +165,7 @@ RSpec.describe PlayerHand do
   describe '#can_dbl?' do
     context 'when not enough money' do
       it 'returns false' do
-        game.money = 9999
+        blackjack.money = 9999
         expect(player_hand).to_not be_can_dbl
       end
     end
@@ -305,36 +305,36 @@ RSpec.describe PlayerHand do
   describe '#process' do
     context 'with more hands to play' do
       before do
-        allow(game).to receive(:more_hands_to_play?).and_return(true)
-        allow(game).to receive(:play_more_hands)
+        allow(blackjack).to receive(:more_hands_to_play?).and_return(true)
+        allow(blackjack).to receive(:play_more_hands)
       end
 
       it 'plays more hands' do
         player_hand.process
-        expect(game).to have_received(:play_more_hands)
+        expect(blackjack).to have_received(:play_more_hands)
       end
     end
 
     context 'with no more hands to play' do
       before do
-        allow(game).to receive(:more_hands_to_play?).and_return(false)
-        allow(game).to receive(:play_dealer_hand)
+        allow(blackjack).to receive(:more_hands_to_play?).and_return(false)
+        allow(blackjack).to receive(:play_dealer_hand)
       end
 
       it 'plays dealer hand' do
         player_hand.process
-        expect(game).to have_received(:play_dealer_hand)
+        expect(blackjack).to have_received(:play_dealer_hand)
       end
     end
   end
 
   describe '#hit' do
     before do
-      game.dealer_hand = dealer_hand
+      blackjack.dealer_hand = dealer_hand
     end
 
     context 'when done' do
-      let(:dealer_hand) { build(:dealer_hand, game: game) }
+      let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
 
       before do
         allow(player_hand).to receive(:done?).and_return(true)
@@ -349,9 +349,9 @@ RSpec.describe PlayerHand do
     context 'when not done' do
       before do
         allow(player_hand).to receive(:done?).and_return(false)
-        allow(game).to receive(:current_player_hand).and_return(player_hand)
+        allow(blackjack).to receive(:current_player_hand).and_return(player_hand)
         allow(player_hand).to receive(:action?)
-        allow(game).to receive(:draw_hands)
+        allow(blackjack).to receive(:draw_hands)
       end
 
       it 'adds a card to the hand' do
@@ -362,9 +362,9 @@ RSpec.describe PlayerHand do
 
   describe '#dbl' do
     before do
-      game.dealer_hand = dealer_hand
-      allow(game).to receive(:draw_hands)
-      allow(game).to receive(:draw_bet_options)
+      blackjack.dealer_hand = dealer_hand
+      allow(blackjack).to receive(:draw_hands)
+      allow(blackjack).to receive(:draw_bet_options)
       allow(player_hand).to receive(:process)
     end
 
@@ -406,9 +406,9 @@ RSpec.describe PlayerHand do
   describe '#stand' do
     before do
       allow(player_hand).to receive(:process)
-      allow(game).to receive(:draw_hands)
-      allow(game).to receive(:draw_bet_options)
-      game.dealer_hand = dealer_hand
+      allow(blackjack).to receive(:draw_hands)
+      allow(blackjack).to receive(:draw_bet_options)
+      blackjack.dealer_hand = dealer_hand
       player_hand.stand
     end
 
@@ -428,14 +428,14 @@ RSpec.describe PlayerHand do
   describe '#action?' do
     before do
       player_hand.cards << ace << ace
-      game.player_hands << player_hand
-      game.dealer_hand = dealer_hand
+      blackjack.player_hands << player_hand
+      blackjack.dealer_hand = dealer_hand
       allow(player_hand).to receive(:puts)
     end
 
     context 'when standing' do
       before do
-        allow(Game).to receive(:getc).and_return('s', 'q')
+        allow(Blackjack).to receive(:getc).and_return('s', 'q')
         allow(player_hand).to receive(:stand)
       end
 
@@ -447,7 +447,7 @@ RSpec.describe PlayerHand do
 
     context 'when hitting' do
       before do
-        allow(Game).to receive(:getc).and_return('h', 'q')
+        allow(Blackjack).to receive(:getc).and_return('h', 'q')
         allow(player_hand).to receive(:hit)
       end
 
@@ -459,7 +459,7 @@ RSpec.describe PlayerHand do
 
     context 'when doubling' do
       before do
-        allow(Game).to receive(:getc).and_return('d', 'q')
+        allow(Blackjack).to receive(:getc).and_return('d', 'q')
         allow(player_hand).to receive(:dbl)
       end
 
@@ -471,22 +471,22 @@ RSpec.describe PlayerHand do
 
     context 'when splitting' do
       before do
-        allow(Game).to receive(:getc).and_return('p', 'q')
-        allow(game).to receive(:split_current_hand)
+        allow(Blackjack).to receive(:getc).and_return('p', 'q')
+        allow(blackjack).to receive(:split_current_hand)
       end
 
       it 'splits the hand' do
         player_hand.action?
-        expect(game).to have_received(:split_current_hand)
+        expect(blackjack).to have_received(:split_current_hand)
       end
     end
 
     context 'when invalid input' do
       before do
-        allow(Game).to receive(:getc).and_return('x', 's', 'q') # ?, split, quit
-        allow(game).to receive(:clear)
-        allow(game).to receive(:draw_hands)
-        allow(game).to receive(:puts)
+        allow(Blackjack).to receive(:getc).and_return('x', 's', 'q')
+        allow(blackjack).to receive(:clear)
+        allow(blackjack).to receive(:draw_hands)
+        allow(blackjack).to receive(:puts)
       end
 
       it 'gets the action again' do
@@ -523,10 +523,10 @@ RSpec.describe PlayerHand do
         expect(player_hand.status).to eq(WON)
       end
 
-      it 'game money is increased by player hand bet' do
+      it 'blackjack money is increased by player hand bet' do
         player_hand.cards << ten << ten
         player_hand.pay(18, false)
-        expect(game.money).to eq(10_500)
+        expect(blackjack.money).to eq(10_500)
       end
 
       it 'hand bet is * 1.5' do
@@ -541,10 +541,10 @@ RSpec.describe PlayerHand do
         expect(player_hand.status).to eq(LOST)
       end
 
-      it 'game money is descreased by player hand bet' do
+      it 'blackjack money is descreased by player hand bet' do
         player_hand.cards << ten << seven
         player_hand.pay(18, false)
-        expect(game.money).to eq(9500)
+        expect(blackjack.money).to eq(9500)
       end
 
       it 'hand is push' do
@@ -553,10 +553,10 @@ RSpec.describe PlayerHand do
         expect(player_hand.status).to eq(PUSH)
       end
 
-      it 'game money is unaltered' do
+      it 'blackjack money is unaltered' do
         player_hand.cards << ten << seven
         player_hand.pay(17, false)
-        expect(game.money).to eq(10_000)
+        expect(blackjack.money).to eq(10_000)
       end
     end
   end

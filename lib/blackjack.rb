@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require_relative 'shoe'
-require_relative 'dealer_hand'
-require_relative 'player_hand'
+require_relative 'blackjack/shoe'
+require_relative 'blackjack/dealer_hand'
+require_relative 'blackjack/player_hand'
 
 SAVE_FILE = 'bj.txt'
 MIN_BET = 500
 MAX_BET = 10_000_000
 
-class Game
+class Blackjack
   attr_accessor :shoe, :money, :player_hands, :dealer_hand, :num_decks, :current_bet, :current_hand
 
   def initialize
@@ -118,7 +118,7 @@ class Game
     out << "\n Dealer:\n#{dealer_hand.draw}\n"
 
     out << "\n Player $"
-    out << Game.format_money(money / 100.0)
+    out << Blackjack.format_money(money / 100.0)
     out << ":\n"
 
     player_hands.each_with_index do |player_hand, index|
@@ -132,7 +132,7 @@ class Game
     clear
     draw_hands
 
-    puts " Current Bet: $#{Game.format_money(current_bet / 100)}\n"
+    puts " Current Bet: $#{Blackjack.format_money(current_bet / 100)}\n"
     print ' Enter New Bet: $'
 
     tmp = STDIN.gets.to_i
@@ -147,7 +147,7 @@ class Game
 
     loop do
       br = false
-      case Game.getc
+      case Blackjack.getc
       when 'n'
         br = true
         clear
@@ -198,7 +198,7 @@ class Game
 
     loop do
       br = false
-      case Game.getc
+      case Blackjack.getc
       when '1'
         br = true
         shoe.new_regular
@@ -232,7 +232,7 @@ class Game
 
     loop do
       br = false
-      case Game.getc
+      case Blackjack.getc
       when 'y'
         br = true
         insure_hand
@@ -322,7 +322,7 @@ class Game
 
     loop do
       br = false
-      case Game.getc
+      case Blackjack.getc
       when 'd'
         br = true
         deal_new_hand

@@ -2,16 +2,16 @@
 
 RSpec.describe Hand do
   let(:shoe) { build(:shoe, :new_regular) }
-  let(:game) { build(:game, shoe: shoe) }
-  let(:hand) { build(:hand, game: game) }
+  let(:blackjack) { build(:blackjack, shoe: shoe) }
+  let(:hand) { build(:hand, blackjack: blackjack) }
 
   describe '.new' do
     it 'creates a hand' do
       expect(hand).to be
     end
 
-    it 'has a game' do
-      expect(hand.game).to eq(game)
+    it 'has a blackjack' do
+      expect(hand.blackjack).to eq(blackjack)
     end
   end
 

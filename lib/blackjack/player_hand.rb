@@ -5,10 +5,10 @@ require_relative 'hand'
 class PlayerHand < Hand
   MAX_PLAYER_HANDS = 7
 
-  attr_accessor :game, :bet, :status, :payed, :cards, :stood
+  attr_accessor :blackjack, :bet, :status, :payed, :cards, :stood
 
-  def initialize(game, bet)
-    super(game)
+  def initialize(blackjack, bet)
+    super(blackjack)
     @bet = bet
     @status = UNKNOWN
     @payed = false
@@ -23,10 +23,10 @@ class PlayerHand < Hand
 
     if dealer_busted || player_hand_value > dealer_hand_value
       self.bet *= 1.5 if blackjack?
-      game.money += bet
+      blackjack.money += bet
       self.status = WON
     elsif player_hand_value < dealer_hand_value
-      game.money -= bet
+      blackjack.money -= bet
       self.status = LOST
     else
       self.status = PUSH
@@ -56,7 +56,7 @@ class PlayerHand < Hand
       if !payed && busted?
         self.payed = true
         self.status = LOST
-        game.money -= bet
+        blackjack.money -= bet
       end
       return true
     end
@@ -65,15 +65,15 @@ class PlayerHand < Hand
   end
 
   def can_split?
-    return false if stood || game.player_hands.size >= MAX_PLAYER_HANDS
+    return false if stood || blackjack.player_hands.size >= MAX_PLAYER_HANDS
 
-    return false if game.money < game.all_bets + bet
+    return false if blackjack.money < blackjack.all_bets + bet
 
     cards.size == 2 && cards.first.value == cards.last.value
   end
 
   def can_dbl?
-    return false if game.money < game.all_bets + bet
+    return false if blackjack.money < blackjack.all_bets + bet
 
     !(stood || cards.size != 2 || blackjack?)
   end
@@ -92,8 +92,8 @@ class PlayerHand < Hand
     if done?
       process
     else
-      game.draw_hands
-      game.current_player_hand.action?
+      blackjack.draw_hands
+      blackjack.current_player_hand.action?
     end
   end
 
@@ -112,10 +112,10 @@ class PlayerHand < Hand
   end
 
   def process
-    if game.more_hands_to_play?
-      game.play_more_hands
+    if blackjack.more_hands_to_play?
+      blackjack.play_more_hands
     else
-      game.play_dealer_hand
+      blackjack.play_dealer_hand
     end
   end
 
@@ -133,8 +133,8 @@ class PlayerHand < Hand
       out << '+'
     end
 
-    out << '$' << Game.format_money(bet / 100.0)
-    out << ' ⇐' if !played && index == game.current_hand
+    out << '$' << Blackjack.format_money(bet / 100.0)
+    out << ' ⇐' if !played && index == blackjack.current_hand
     out << '  '
 
     if status == LOST
@@ -159,7 +159,7 @@ class PlayerHand < Hand
 
     loop do
       br = false
-      case Game.getc
+      case Blackjack.getc
       when 'h'
         br = true
         hit
@@ -168,13 +168,13 @@ class PlayerHand < Hand
         stand
       when 'p'
         br = true
-        game.split_current_hand
+        blackjack.split_current_hand
       when 'd'
         br = true
         dbl
       else
-        game.clear
-        game.draw_hands
+        blackjack.clear
+        blackjack.draw_hands
         action?
       end
 

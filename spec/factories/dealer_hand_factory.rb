@@ -2,9 +2,9 @@
 
 FactoryBot.define do
   factory :dealer_hand do
-    game { nil }
+    blackjack { nil }
     hide_down_card { true }
 
-    initialize_with { new(game) }
+    initialize_with { new(blackjack) }
   end
 end

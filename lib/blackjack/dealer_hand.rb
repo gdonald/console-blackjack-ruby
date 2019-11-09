@@ -3,10 +3,10 @@
 require_relative 'hand'
 
 class DealerHand < Hand
-  attr_accessor :game, :hide_down_card
+  attr_accessor :blackjack, :hide_down_card
 
-  def initialize(game)
-    super(game)
+  def initialize(blackjack)
+    super(blackjack)
     @hide_down_card = true
   end
 
@@ -54,10 +54,10 @@ class DealerHand < Hand
   end
 
   def play
-    playing = game.need_to_play_dealer_hand?
+    playing = blackjack.need_to_play_dealer_hand?
     self.hide_down_card = false if blackjack? || playing
     deal_required_cards if playing
     self.played = true
-    game.pay_hands
+    blackjack.pay_hands
   end
 end

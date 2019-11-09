@@ -9,10 +9,10 @@ SOFT = 4
 HARD = 5
 
 class Hand
-  attr_accessor :cards, :game, :played
+  attr_accessor :cards, :blackjack, :played
 
-  def initialize(game)
-    @game = game
+  def initialize(blackjack)
+    @blackjack = blackjack
     @played = false
     @cards = []
   end
@@ -22,7 +22,7 @@ class Hand
   end
 
   def deal_card
-    cards << game.shoe.next_card
+    cards << blackjack.shoe.next_card
   end
 
   def blackjack?
