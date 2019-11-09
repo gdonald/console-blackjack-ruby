@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'coveralls', require: false
 gem 'factory_bot'
 gem 'pry'
 gem 'rake'
