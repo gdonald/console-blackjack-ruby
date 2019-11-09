@@ -358,7 +358,169 @@ RSpec.describe Game do
     end
   end
 
-  describe '#pay_hands' do
+  describe '#draw_hands' do
+    before do
+      player_hand.cards << ace << ten
+      game.player_hands << player_hand
+      dealer_hand.cards << ten << ten
+      game.dealer_hand = dealer_hand
+      allow(game).to receive(:puts)
+    end
 
+    it 'draws the hands' do
+      game.draw_hands
+      expected = "\n Dealer:\n 🂪 🂠  ⇒  10\n\n Player $100.00:\n 🂡 🂪  ⇒  21  $5.00 ⇐  \n\n"
+      expect(game).to have_received(:puts).with(expected)
+    end
+  end
+
+  describe '#new_bet' do
+    before do
+      game.dealer_hand = dealer_hand
+      allow(STDIN).to receive(:gets).and_return('10')
+      allow(described_class).to receive(:getc).and_return('s', 'q')
+      allow(game).to receive(:print)
+      allow(game).to receive(:puts)
+      allow(game).to receive(:deal_new_hand)
+      allow(game).to receive(:clear)
+      allow(game).to receive(:draw_hands)
+      allow(game).to receive(:normalize_current_bet)
+    end
+
+    it 'clears the screen' do
+      game.new_bet
+      expect(game).to have_received(:clear)
+    end
+
+    it 'draws hands' do
+      game.new_bet
+      expect(game).to have_received(:draw_hands)
+    end
+
+    it 'draws the current bet' do
+      game.new_bet
+      expected = " Current Bet: $5.00\n"
+      expect(game).to have_received(:puts).with(expected)
+    end
+
+    it 'updates current bet' do
+      game.new_bet
+      expect(game.current_bet).to eq(1000)
+    end
+
+    it 'normalizes the bet' do
+      game.new_bet
+      expect(game).to have_received(:normalize_current_bet)
+    end
+
+    it 'deals a new hand' do
+      game.new_bet
+      expect(game).to have_received(:deal_new_hand)
+    end
+  end
+
+  describe '#draw_game_options' do
+    before do
+      game.dealer_hand = dealer_hand
+    end
+
+    context 'when updating number of decks' do
+      before do
+        allow(described_class).to receive(:getc).and_return('n')
+        allow(game).to receive(:clear)
+        allow(game).to receive(:draw_hands)
+        allow(game).to receive(:new_num_decks)
+        allow(game).to receive(:puts)
+      end
+
+      it 'draws the game options' do
+        game.draw_game_options
+        expected = ' (N) Number of Decks  (T) Deck Type  (B) Back'
+        expect(game).to have_received(:puts).with(expected)
+      end
+
+      it 'clears the screen' do
+        game.draw_game_options
+        expect(game).to have_received(:clear)
+      end
+
+      it 'draws the hands' do
+        game.draw_game_options
+        expect(game).to have_received(:draw_hands)
+      end
+
+      it 'updates number of decks' do
+        game.draw_game_options
+        expect(game).to have_received(:new_num_decks)
+      end
+    end
+
+    context 'when updating the deck type' do
+      before do
+        allow(described_class).to receive(:getc).and_return('t')
+        allow(game).to receive(:clear)
+        allow(game).to receive(:draw_hands)
+        allow(game).to receive(:new_deck_type)
+        allow(game).to receive(:draw_bet_options)
+        allow(game).to receive(:puts)
+      end
+
+      it 'clears the screen' do
+        game.draw_game_options
+        expect(game).to have_received(:clear).twice
+      end
+
+      it 'draws the hands' do
+        game.draw_game_options
+        expect(game).to have_received(:draw_hands).twice
+      end
+
+      it 'updates deck type' do
+        game.draw_game_options
+        expect(game).to have_received(:new_deck_type)
+      end
+
+      it 'draws the bet options' do
+        game.draw_game_options
+        expect(game).to have_received(:draw_bet_options)
+      end
+    end
+
+    context 'when going back to previous menu' do
+      before do
+        allow(described_class).to receive(:getc).and_return('b')
+        allow(game).to receive(:clear)
+        allow(game).to receive(:draw_hands)
+        allow(game).to receive(:draw_bet_options)
+        allow(game).to receive(:puts)
+      end
+
+      it 'clears the screen' do
+        game.draw_game_options
+        expect(game).to have_received(:clear)
+      end
+
+      it 'draws the hands' do
+        game.draw_game_options
+        expect(game).to have_received(:draw_hands)
+      end
+
+      it 'draws the bet options' do
+        game.draw_game_options
+        expect(game).to have_received(:draw_bet_options)
+      end
+    end
+
+    # context 'when invalid input' do
+    #   before do
+    #     allow(described_class).to receive(:getc).and_return('x', 'b', 'q')
+    #     allow(game).to receive(:draw_game_options)
+    #   end
+    #
+    #   it 'gets the action again' do
+    #     game.draw_game_options
+    #     expect(game).to have_received(:draw_game_options)
+    #   end
+    # end
   end
 end

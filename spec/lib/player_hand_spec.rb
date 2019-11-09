@@ -496,6 +496,68 @@ RSpec.describe PlayerHand do
   end
 
   describe '#pay' do
+    it 'returns if already payed' do
+      player_hand.payed = true
+      allow(player_hand).to receive(:value)
+      player_hand.pay(18, false)
+      expect(player_hand).to_not have_received(:value)
+    end
 
+    context 'when dealer busted' do
+      it 'hand is won' do
+        player_hand.pay(22, true)
+        expect(player_hand.status).to eq(WON)
+      end
+    end
+
+    context 'when dealer is not busted' do
+      it 'hand is set to payed' do
+        player_hand.cards << ten << ten
+        player_hand.pay(18, false)
+        expect(player_hand.payed).to be_truthy
+      end
+
+      it 'hand status is won' do
+        player_hand.cards << ten << ten
+        player_hand.pay(18, false)
+        expect(player_hand.status).to eq(WON)
+      end
+
+      it 'game money is increased by player hand bet' do
+        player_hand.cards << ten << ten
+        player_hand.pay(18, false)
+        expect(game.money).to eq(10_500)
+      end
+
+      it 'hand bet is * 1.5' do
+        player_hand.cards << ace << ten
+        player_hand.pay(18, false)
+        expect(player_hand.bet).to eq(750)
+      end
+
+      it 'hand is lost' do
+        player_hand.cards << ten << seven
+        player_hand.pay(18, false)
+        expect(player_hand.status).to eq(LOST)
+      end
+
+      it 'game money is descreased by player hand bet' do
+        player_hand.cards << ten << seven
+        player_hand.pay(18, false)
+        expect(game.money).to eq(9500)
+      end
+
+      it 'hand is push' do
+        player_hand.cards << ten << seven
+        player_hand.pay(17, false)
+        expect(player_hand.status).to eq(PUSH)
+      end
+
+      it 'game money is unaltered' do
+        player_hand.cards << ten << seven
+        player_hand.pay(17, false)
+        expect(game.money).to eq(10_000)
+      end
+    end
   end
 end
