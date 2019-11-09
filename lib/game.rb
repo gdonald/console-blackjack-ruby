@@ -179,15 +179,18 @@ class Game
   def new_num_decks
     puts " Number Of Decks: #{num_decks}"
     print ' New Number Of Decks (1-8): '
-    tmp = STDIN.gets.to_i
+    self.num_decks = STDIN.gets.to_i
 
-    tmp = 1 if tmp < 1
-    tmp = 8 if tmp > 8
-    self.num_decks = tmp
+    normalize_num_decks
 
     clear
     draw_hands
     draw_game_options
+  end
+
+  def normalize_num_decks
+    self.num_decks = 1 if num_decks < 1
+    self.num_decks = 8 if num_decks > 8
   end
 
   def new_deck_type
@@ -262,22 +265,20 @@ class Game
   def no_insurance
     if dealer_hand.blackjack?
       dealer_hand.hide_down_card = false
-      dealer_hand.played = true
 
       pay_hands
       draw_hands
       draw_bet_options
-      return
-    end
+    else
+      player_hand = current_player_hand
 
-    player_hand = current_player_hand
-    if player_hand.done?
-      play_dealer_hand
-      return
+      if player_hand.done?
+        play_dealer_hand
+      else
+        draw_hands
+        player_hand.action?
+      end
     end
-
-    draw_hands
-    player_hand.action?
   end
 
   def play_dealer_hand
@@ -287,35 +288,33 @@ class Game
   end
 
   def split_current_hand
-    unless current_player_hand.can_split?
+    if current_player_hand.can_split?
+      player_hands << PlayerHand.new(self, current_bet)
+
+      x = player_hands.size - 1
+      while x > current_hand
+        player_hands[x] = player_hands[x - 1].clone
+        x -= 1
+      end
+
+      this_hand = player_hands[current_hand]
+      split_hand = player_hands[current_hand + 1]
+
+      split_hand.cards = []
+      split_hand.cards << this_hand.cards.last
+      this_hand.cards.pop
+
+      this_hand.cards << shoe.next_card
+      if this_hand.done?
+        this_hand.process
+      else
+        draw_hands
+        current_player_hand.action?
+      end
+    else
       draw_hands
       current_player_hand.action?
-      return
     end
-
-    player_hands << PlayerHand.new(self, current_bet)
-
-    x = player_hands.size - 1
-    while x > current_hand
-      player_hands[x] = player_hands[x - 1].clone
-      x -= 1
-    end
-
-    this_hand = player_hands[current_hand]
-    split_hand = player_hands[current_hand + 1]
-
-    split_hand.cards = []
-    split_hand.cards << this_hand.cards.last
-    this_hand.cards.pop
-
-    this_hand.cards << shoe.next_card
-    if this_hand.done?
-      this_hand.process
-      return
-    end
-
-    draw_hands
-    current_player_hand.action?
   end
 
   def draw_bet_options

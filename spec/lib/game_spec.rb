@@ -6,6 +6,8 @@ RSpec.describe Game do
   let(:player_hand) { build(:player_hand, game: game) }
   let(:dealer_hand) { build(:dealer_hand, game: game) }
   let(:ace) { build(:card, :ace) }
+  let(:seven) { build(:card, :seven) }
+  let(:six) { build(:card, :six) }
   let(:ten) { build(:card, :ten) }
 
   describe '#current_player_hand' do
@@ -511,16 +513,359 @@ RSpec.describe Game do
       end
     end
 
-    # context 'when invalid input' do
-    #   before do
-    #     allow(described_class).to receive(:getc).and_return('x', 'b', 'q')
-    #     allow(game).to receive(:draw_game_options)
-    #   end
-    #
-    #   it 'gets the action again' do
-    #     game.draw_game_options
-    #     expect(game).to have_received(:draw_game_options)
-    #   end
-    # end
+    context 'when invalid input' do
+      before do
+        allow(described_class).to receive(:getc).and_return('x', 'b')
+        allow(game).to receive(:puts)
+        allow(game).to receive(:new_bet)
+        allow(game).to receive(:draw_bet_options)
+        allow(game).to receive(:draw_hands)
+      end
+
+      it 'gets the action again' do
+        game.draw_game_options
+        allow(game).to receive(:draw_game_options)
+        expect(game).to have_received(:draw_bet_options).twice
+      end
+    end
+  end
+
+  describe '#new_num_decks' do
+    before do
+      game.dealer_hand = dealer_hand
+      allow(STDIN).to receive(:gets).and_return('2')
+      allow(described_class).to receive(:getc).and_return('b', 'q')
+      allow(game).to receive(:print)
+      allow(game).to receive(:puts)
+      allow(game).to receive(:clear)
+      allow(game).to receive(:draw_hands)
+      allow(game).to receive(:draw_game_options)
+      allow(game).to receive(:normalize_num_decks)
+    end
+
+    it 'clears screen' do
+      game.new_num_decks
+      expect(game).to have_received(:clear)
+    end
+
+    it 'draws hands' do
+      game.new_num_decks
+      expect(game).to have_received(:draw_hands)
+    end
+
+    it 'gets new number of decks' do
+      game.new_num_decks
+      expect(game.num_decks).to eq(2)
+    end
+
+    it 'normalizes number of decks' do
+      game.new_num_decks
+      expect(game).to have_received(:normalize_num_decks)
+    end
+  end
+
+  describe '#normalize_num_decks' do
+    it 'increases the value' do
+      game.num_decks = 0
+      game.normalize_num_decks
+      expect(game.num_decks).to eq(1)
+    end
+
+    it 'decreases the value' do
+      game.num_decks = 9
+      game.normalize_num_decks
+      expect(game.num_decks).to eq(8)
+    end
+
+    it 'leaves the value unaltered' do
+      game.num_decks = 2
+      game.normalize_num_decks
+      expect(game.num_decks).to eq(2)
+    end
+  end
+
+  describe '#new_deck_type' do
+    before do
+      game.dealer_hand = dealer_hand
+      allow(game).to receive(:puts)
+    end
+
+    context 'when choosing a new deck type' do
+      it 'draws options' do
+        allow(described_class).to receive(:getc).and_return('1')
+        game.new_deck_type
+        expected = ' (1) Regular  (2) Aces  (3) Jacks  (4) Aces & Jacks  (5) Sevens  (6) Eights'
+        expect(game).to have_received(:puts).with(expected)
+      end
+
+      it 'builds a new regular' do
+        allow(described_class).to receive(:getc).and_return('1')
+        allow(shoe).to receive(:new_regular)
+        game.new_deck_type
+        expect(shoe).to have_received(:new_regular)
+      end
+
+      it 'builds a new aces' do
+        allow(described_class).to receive(:getc).and_return('2')
+        allow(shoe).to receive(:new_aces)
+        game.new_deck_type
+        expect(shoe).to have_received(:new_aces)
+      end
+
+      it 'builds a new jacks' do
+        allow(described_class).to receive(:getc).and_return('3')
+        allow(shoe).to receive(:new_jacks)
+        game.new_deck_type
+        expect(shoe).to have_received(:new_jacks)
+      end
+
+      it 'builds a new aces_jacks' do
+        allow(described_class).to receive(:getc).and_return('4')
+        allow(shoe).to receive(:new_aces_jacks)
+        game.new_deck_type
+        expect(shoe).to have_received(:new_aces_jacks)
+      end
+
+      it 'builds a new sevens' do
+        allow(described_class).to receive(:getc).and_return('5')
+        allow(shoe).to receive(:new_sevens)
+        game.new_deck_type
+        expect(shoe).to have_received(:new_sevens)
+      end
+
+      it 'builds a new eights' do
+        allow(described_class).to receive(:getc).and_return('6')
+        allow(shoe).to receive(:new_eights)
+        game.new_deck_type
+        expect(shoe).to have_received(:new_eights)
+      end
+    end
+
+    context 'when invalid input' do
+      it 'gets the action again' do
+        allow(described_class).to receive(:getc).and_return('x', '1')
+        allow(game).to receive(:draw_hands)
+        game.new_deck_type
+        expect(game).to have_received(:draw_hands)
+      end
+    end
+  end
+
+  describe '#ask_insurance' do
+    before do
+      # game.dealer_hand = dealer_hand
+      allow(game).to receive(:puts)
+      allow(game).to receive(:insure_hand)
+      allow(game).to receive(:no_insurance)
+    end
+
+    context 'when choosing to take insurance' do
+      it 'draws options' do
+        allow(described_class).to receive(:getc).and_return('y')
+        game.ask_insurance
+        expected = ' Insurance?  (Y) Yes  (N) No'
+        expect(game).to have_received(:puts).with(expected)
+      end
+
+      it 'insures hand' do
+        allow(described_class).to receive(:getc).and_return('y')
+        game.ask_insurance
+        expect(game).to have_received(:insure_hand)
+      end
+
+      it 'does not insure hand' do
+        allow(described_class).to receive(:getc).and_return('n')
+        game.ask_insurance
+        expect(game).to have_received(:no_insurance)
+      end
+    end
+
+    context 'when invalid input' do
+      it 'asks again' do
+        allow(described_class).to receive(:getc).and_return('x', 'y')
+        allow(game).to receive(:draw_hands)
+        game.ask_insurance
+        expect(game).to have_received(:draw_hands)
+      end
+    end
+  end
+
+  describe '#insure_hand' do
+    before do
+      game.dealer_hand = dealer_hand
+      game.player_hands << player_hand
+      allow(game).to receive(:draw_hands)
+      allow(game).to receive(:draw_bet_options)
+    end
+
+    it 'reduces hand bet' do
+      game.insure_hand
+      expect(player_hand.bet).to eq(250)
+    end
+
+    it 'sets hand as played' do
+      game.insure_hand
+      expect(player_hand.played).to be_truthy
+    end
+
+    it 'sets hand as payed' do
+      game.insure_hand
+      expect(player_hand.payed).to be_truthy
+    end
+
+    it 'sets hand status as LOST' do
+      game.insure_hand
+      expect(player_hand.status).to eq(LOST)
+    end
+
+    it 'updates game money' do
+      game.insure_hand
+      expect(game.money).to eq(9750)
+    end
+
+    it 'draws hands' do
+      game.insure_hand
+      expect(game).to have_received(:draw_hands)
+    end
+
+    it 'draws bet options' do
+      game.insure_hand
+      expect(game).to have_received(:draw_bet_options)
+    end
+  end
+
+  describe '#no_insurance' do
+    before do
+      game.dealer_hand = dealer_hand
+      game.player_hands << player_hand
+      allow(player_hand).to receive(:action?)
+      allow(game).to receive(:draw_bet_options)
+      allow(game).to receive(:draw_hands)
+      allow(game).to receive(:pay_hands)
+    end
+
+    context 'when dealer hand is blackjack' do
+      before do
+        dealer_hand.cards << ace << ten
+      end
+
+      it 'shows dealer down card' do
+        game.no_insurance
+        expect(dealer_hand.hide_down_card).to be_falsey
+      end
+
+      it 'pays hands' do
+        game.no_insurance
+        expect(game).to have_received(:pay_hands)
+      end
+
+      it 'draws hands' do
+        game.no_insurance
+        expect(game).to have_received(:draw_hands)
+      end
+
+      it 'draws bet options' do
+        game.no_insurance
+        expect(game).to have_received(:draw_bet_options)
+      end
+    end
+
+    context 'when dealer hand is not blackjack' do
+      before do
+        dealer_hand.cards << ace << seven
+        allow(game).to receive(:play_dealer_hand)
+      end
+
+      it 'plays dealer hand' do
+        allow(player_hand).to receive(:done?).and_return(true)
+        game.no_insurance
+        expect(game).to have_received(:play_dealer_hand)
+      end
+
+      it 'draws hands' do
+        allow(player_hand).to receive(:done?).and_return(false)
+        game.no_insurance
+        expect(game).to have_received(:draw_hands)
+      end
+
+      it 'gets player hand action' do
+        allow(player_hand).to receive(:done?).and_return(false)
+        game.no_insurance
+        expect(player_hand).to have_received(:action?)
+      end
+    end
+  end
+
+  describe '#play_dealer_hand' do
+    before do
+      game.dealer_hand = dealer_hand
+      allow(dealer_hand).to receive(:play)
+      allow(game).to receive(:draw_bet_options)
+      allow(game).to receive(:draw_hands)
+    end
+
+    it 'plays dealer hand' do
+      game.play_dealer_hand
+      expect(dealer_hand).to have_received(:play)
+    end
+
+    it 'draws bet options' do
+      game.play_dealer_hand
+      expect(game).to have_received(:draw_bet_options)
+    end
+
+    it 'draws hands' do
+      game.play_dealer_hand
+      expect(game).to have_received(:draw_hands)
+    end
+  end
+
+  describe '#split_current_hand' do
+    before do
+      game.dealer_hand = dealer_hand
+      game.player_hands << player_hand
+      allow(game).to receive(:current_player_hand).and_return(player_hand)
+    end
+
+    context 'when current hand can split' do
+      before do
+        player_hand.cards << six << six
+        allow(described_class).to receive(:getc).and_return('s', 's')
+        allow(game).to receive(:draw_bet_options)
+        allow(game).to receive(:draw_hands)
+        allow(player_hand).to receive(:action?)
+      end
+
+      it 'splits hand' do
+        game.split_current_hand
+        expect(game.player_hands.size).to eq(2)
+      end
+
+      it 'first hand is done' do
+        allow(player_hand).to receive(:done?).and_return(true)
+        game.split_current_hand
+        expect(player_hand).to have_received(:done?).twice
+      end
+    end
+
+    context 'when current hand cannot split' do
+      before do
+        player_hand.cards << ace << six
+        allow(described_class).to receive(:getc).and_return('s')
+        allow(game).to receive(:draw_bet_options)
+        allow(game).to receive(:draw_hands)
+        allow(player_hand).to receive(:action?)
+      end
+
+      it 'draws hands' do
+        game.split_current_hand
+        expect(game).to have_received(:draw_hands)
+      end
+
+      it 'gets player hand action' do
+        game.split_current_hand
+        expect(player_hand).to have_received(:action?)
+      end
+    end
   end
 end
