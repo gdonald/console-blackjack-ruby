@@ -3,6 +3,7 @@
 require_relative 'blackjack/shoe'
 require_relative 'blackjack/dealer_hand'
 require_relative 'blackjack/player_hand'
+require_relative 'blackjack/draw'
 
 SAVE_FILE = 'bj.txt'
 MIN_BET = 500
@@ -120,9 +121,7 @@ class Blackjack
     out << Blackjack.format_money(money / 100.0)
     out << ":\n"
 
-    player_hands.each_with_index do |player_hand, index|
-      out << player_hand.draw(index)
-    end
+    out << Draw.player_hands(self, player_hands)
 
     puts out
   end

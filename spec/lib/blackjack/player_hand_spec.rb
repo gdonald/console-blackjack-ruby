@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 RSpec.describe PlayerHand do
@@ -270,35 +269,6 @@ RSpec.describe PlayerHand do
         player_hand.cards << six << six
         expect(player_hand).to be_can_hit
       end
-    end
-  end
-
-  describe '#draw' do
-    it 'draws the hand' do
-      player_hand.cards << ace << ten
-      expected = " 🂡 🂪  ⇒  21  $5.00  \n\n"
-      expect(player_hand.draw(1)).to eq(expected)
-    end
-
-    it 'draws a lost hand' do
-      player_hand.cards << ace << ace
-      player_hand.status = LOST
-      expected = " 🂡 🂡  ⇒  12  -$5.00  Lose!\n\n"
-      expect(player_hand.draw(1)).to eq(expected)
-    end
-
-    it 'draws a won hand' do
-      player_hand.cards << ace << ace
-      player_hand.status = WON
-      expected = " 🂡 🂡  ⇒  12  +$5.00  Won!\n\n"
-      expect(player_hand.draw(1)).to eq(expected)
-    end
-
-    it 'draws a push hand' do
-      player_hand.cards << ace << ace
-      player_hand.status = PUSH
-      expected = " 🂡 🂡  ⇒  12  $5.00  Push\n\n"
-      expect(player_hand.draw(1)).to eq(expected)
     end
   end
 
