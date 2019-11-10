@@ -50,19 +50,13 @@ class PlayerHand < Hand
   end
 
   def value(count_method)
-    total = cards.inject(0) { |sum, card| sum + card_value(card, count_method, sum) }
+    total = cards.inject(0) { |sum, card| sum + Card.value(card, count_method, sum) }
 
     if count_method == SOFT && total > 21
       value(HARD)
     else
       total
     end
-  end
-
-  def card_value(card, count_method, total)
-    value = card.value + 1
-    v = value > 9 ? 10 : value
-    count_method == SOFT && v == 1 && total < 11 ? 11 : v
   end
 
   def done?

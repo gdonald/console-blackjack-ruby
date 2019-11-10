@@ -25,15 +25,9 @@ class DealerHand < Hand
     cards.each_with_index do |card, index|
       next if index == 1 && hide_down_card
 
-      total += card_value(card, count_method, total)
+      total += Card.value(card, count_method, total)
     end
     total
-  end
-
-  def card_value(card, count_method, total)
-    value = card.value + 1
-    v = value > 9 ? 10 : value
-    count_method == SOFT && v == 1 && total < 11 ? 11 : v
   end
 
   def upcard_is_ace?
