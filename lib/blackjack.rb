@@ -143,10 +143,8 @@ class Blackjack
 
   def draw_game_options
     puts ' (N) Number of Decks  (T) Deck Type  (B) Back'
-
     loop do
       c = Blackjack.getc
-      br = %w[n t b].include?(c)
       case c
       when 'n'
         clear_draw_hands_new_num_decks
@@ -158,8 +156,7 @@ class Blackjack
       else
         clear_draw_hands_game_options
       end
-
-      break if br
+      break if %w[n t b].include?(c)
     end
   end
 
@@ -191,42 +188,38 @@ class Blackjack
 
   def new_deck_type
     puts ' (1) Regular  (2) Aces  (3) Jacks  (4) Aces & Jacks  (5) Sevens  (6) Eights'
-
     loop do
-      br = false
       c = Blackjack.getc.to_i
       case c
       when (1..6)
-        br = true
         shoe.send("new_#{SHOES[c]}")
       else
         clear_draw_hands_new_deck_type
       end
-
-      break if br
+      break if (1..6).include?(c)
     end
   end
 
   def ask_insurance
     puts ' Insurance?  (Y) Yes  (N) No'
-
     loop do
-      br = false
-      case Blackjack.getc
+      c = Blackjack.getc
+      case c
       when 'y'
-        br = true
         insure_hand
       when 'n'
-        br = true
         no_insurance
       else
-        clear
-        draw_hands
-        ask_insurance
+        clear_draw_hands_ask_insurance
       end
-
-      break if br
+      break if %w[y n].include?(c)
     end
+  end
+
+  def clear_draw_hands_ask_insurance
+    clear
+    draw_hands
+    ask_insurance
   end
 
   def insure_hand
@@ -299,10 +292,8 @@ class Blackjack
 
   def draw_bet_options
     puts ' (D) Deal Hand  (B) Change Bet  (O) Options  (Q) Quit'
-
     loop do
       c = Blackjack.getc
-      br = %w[d b o].include?(c)
       case c
       when 'd'
         deal_new_hand
@@ -316,8 +307,7 @@ class Blackjack
       else
         clear_draw_hands_bet_options
       end
-
-      break if br
+      break if %w[d b o].include?(c)
     end
   end
 
