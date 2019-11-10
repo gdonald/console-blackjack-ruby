@@ -2,9 +2,7 @@
 
 module PlayerHandActions
   def can_split?
-    if stood || blackjack.player_hands.size >= PlayerHand::MAX_PLAYER_HANDS
-      return false
-    end
+    return false if stood || blackjack.player_hands.size >= PlayerHand::MAX_PLAYER_HANDS
 
     return false if blackjack.money < blackjack.all_bets + bet
 

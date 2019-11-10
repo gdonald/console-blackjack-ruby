@@ -17,9 +17,9 @@ RSpec.describe Hand do
 
   describe '#deal_card' do
     it 'adds a card to the hand' do
-      expect {
+      expect do
         hand.deal_card
-      }.to change { hand.cards.size }.by(1)
+      end.to change { hand.cards.size }.by(1)
     end
   end
 
