@@ -64,20 +64,23 @@ class PlayerHand < Hand
   end
 
   def done?
-    if played || stood || blackjack? || busted? ||
-       value(SOFT) == 21 ||
-       value(HARD) == 21
+    if no_more_actions?
       self.played = true
-
-      if !payed && busted?
-        self.payed = true
-        self.status = LOST
-        blackjack.money -= bet
-      end
-      return true
+      collect_busted_hand if !payed && busted?
+      true
+    else
+      false
     end
+  end
 
-    false
+  def collect_busted_hand
+    self.payed = true
+    self.status = LOST
+    blackjack.money -= bet
+  end
+
+  def no_more_actions?
+    played || stood || blackjack? || busted? || value(SOFT) == 21 || value(HARD) == 21
   end
 
   def can_split?
