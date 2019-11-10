@@ -21,16 +21,32 @@ class PlayerHand < Hand
     self.payed = true
     player_hand_value = value(SOFT)
 
-    if dealer_busted || player_hand_value > dealer_hand_value
-      self.bet *= 1.5 if blackjack?
-      blackjack.money += bet
-      self.status = WON
-    elsif player_hand_value < dealer_hand_value
-      blackjack.money -= bet
-      self.status = LOST
+    if player_hand_won?(dealer_busted, dealer_hand_value, player_hand_value)
+      pay_won_hand
+    elsif player_hand_lost?(dealer_hand_value, player_hand_value)
+      collect_lost_hand
     else
       self.status = PUSH
     end
+  end
+
+  def player_hand_lost?(dealer_hand_value, player_hand_value)
+    player_hand_value < dealer_hand_value
+  end
+
+  def player_hand_won?(dealer_busted, dealer_hand_value, player_hand_value)
+    dealer_busted || player_hand_value > dealer_hand_value
+  end
+
+  def collect_lost_hand
+    blackjack.money -= bet
+    self.status = LOST
+  end
+
+  def pay_won_hand
+    self.bet *= 1.5 if blackjack?
+    blackjack.money += bet
+    self.status = WON
   end
 
   def value(count_method)
