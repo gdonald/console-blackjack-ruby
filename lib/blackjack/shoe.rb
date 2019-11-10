@@ -2,6 +2,15 @@
 
 require_relative 'card'
 
+SHOES = {
+  1 => :regular,
+  2 => :aces,
+  3 => :jacks,
+  4 => :aces_jacks,
+  5 => :sevens,
+  6 => :eights
+}.freeze
+
 class Shoe
   attr_accessor :num_decks, :cards
 

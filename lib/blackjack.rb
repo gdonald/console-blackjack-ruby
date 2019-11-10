@@ -198,25 +198,11 @@ class Blackjack
 
     loop do
       br = false
-      case Blackjack.getc
-      when '1'
+      c = Blackjack.getc.to_i
+      case c
+      when (1..6)
         br = true
-        shoe.new_regular
-      when '2'
-        br = true
-        shoe.new_aces
-      when '3'
-        br = true
-        shoe.new_jacks
-      when '4'
-        br = true
-        shoe.new_aces_jacks
-      when '5'
-        br = true
-        shoe.new_sevens
-      when '6'
-        br = true
-        shoe.new_eights
+        shoe.send("new_#{SHOES[c]}")
       else
         clear
         draw_hands
