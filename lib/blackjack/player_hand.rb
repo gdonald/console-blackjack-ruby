@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require_relative 'hand'
+require_relative 'player_hand_actions'
 
 class PlayerHand < Hand
+  include PlayerHandActions
+
   MAX_PLAYER_HANDS = 7
 
   attr_accessor :blackjack, :bet, :status, :payed, :cards, :stood
@@ -13,18 +16,6 @@ class PlayerHand < Hand
     @status = UNKNOWN
     @payed = false
     @stood = false
-  end
-
-  def lost_str
-    busted? ? 'Busted!' : 'Lose!'
-  end
-
-  def won_str
-    blackjack? ? 'Blackjack!' : 'Won!'
-  end
-
-  def push_str
-    'Push'
   end
 
   def pay(dealer_hand_value, dealer_busted)
@@ -72,13 +63,11 @@ class PlayerHand < Hand
   end
 
   def done?
-    if no_more_actions?
-      self.played = true
-      collect_busted_hand if !payed && busted?
-      true
-    else
-      false
-    end
+    return false unless no_more_actions?
+
+    self.played = true
+    collect_busted_hand if !payed && busted?
+    true
   end
 
   def collect_busted_hand
@@ -89,53 +78,6 @@ class PlayerHand < Hand
 
   def no_more_actions?
     played || stood || blackjack? || busted? || value(SOFT) == 21 || value(HARD) == 21
-  end
-
-  def can_split?
-    return false if stood || blackjack.player_hands.size >= MAX_PLAYER_HANDS
-
-    return false if blackjack.money < blackjack.all_bets + bet
-
-    cards.size == 2 && cards.first.value == cards.last.value
-  end
-
-  def can_dbl?
-    return false if blackjack.money < blackjack.all_bets + bet
-
-    !(stood || cards.size != 2 || blackjack?)
-  end
-
-  def can_stand?
-    !(stood || busted? || blackjack?)
-  end
-
-  def can_hit?
-    !(played || stood || value(HARD) == 21 || blackjack? || busted?)
-  end
-
-  def hit
-    deal_card
-
-    if done?
-      process
-    else
-      blackjack.draw_hands
-      blackjack.current_player_hand.action?
-    end
-  end
-
-  def dbl
-    deal_card
-
-    self.played = true
-    self.bet *= 2
-    process if done?
-  end
-
-  def stand
-    self.stood = true
-    self.played = true
-    process
   end
 
   def process

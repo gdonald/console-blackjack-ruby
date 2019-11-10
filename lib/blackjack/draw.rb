@@ -21,14 +21,22 @@ module Draw
   def self.player_hand_status(player_hand)
     case player_hand.status
     when LOST
-      player_hand.lost_str
+      Draw.player_hand_lost_str(player_hand)
     when WON
-      player_hand.won_str
+      Draw.player_hand_won_str(player_hand)
     when PUSH
-      player_hand.push_str
+      'Push'
     else
       ''
     end
+  end
+
+  def self.player_hand_lost_str(player_hand)
+    player_hand.busted? ? 'Busted!' : 'Lose!'
+  end
+
+  def self.player_hand_won_str(player_hand)
+    player_hand.blackjack? ? 'Blackjack!' : 'Won!'
   end
 
   def self.player_hand_money(blackjack, player_hand, index)
