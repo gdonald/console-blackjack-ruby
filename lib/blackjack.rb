@@ -1,18 +1,20 @@
 # frozen_string_literal: true
 
-require_relative 'blackjack/shoe'
 require_relative 'blackjack/dealer_hand'
-require_relative 'blackjack/player_hand'
 require_relative 'blackjack/draw'
-require_relative 'blackjack/utils'
+require_relative 'blackjack/menus'
+require_relative 'blackjack/player_hand'
+require_relative 'blackjack/shoe'
 require_relative 'blackjack/split_hand'
+require_relative 'blackjack/utils'
 
 SAVE_FILE = 'bj.txt'
 MIN_BET = 500
 MAX_BET = 10_000_000
 
 class Blackjack
-  include(SplitHand)
+  include Menus
+  include SplitHand
   include Utils
 
   attr_accessor :shoe, :money, :player_hands, :dealer_hand, :num_decks, :current_bet, :current_hand
@@ -131,25 +133,6 @@ class Blackjack
     deal_new_hand
   end
 
-  def draw_game_options
-    puts ' (N) Number of Decks  (T) Deck Type  (B) Back'
-    loop do
-      c = Blackjack.getc
-      case c
-      when 'n'
-        clear_draw_hands_new_num_decks
-      when 't'
-        clear_draw_hands_new_deck_type
-        clear_draw_hands_bet_options
-      when 'b'
-        clear_draw_hands_bet_options
-      else
-        clear_draw_hands_game_options
-      end
-      break if %w[n t b].include?(c)
-    end
-  end
-
   def new_num_decks
     puts " Number Of Decks: #{num_decks}"
     print ' New Number Of Decks (1-8): '
@@ -162,36 +145,6 @@ class Blackjack
   def normalize_num_decks
     self.num_decks = 1 if num_decks < 1
     self.num_decks = 8 if num_decks > 8
-  end
-
-  def new_deck_type
-    puts ' (1) Regular  (2) Aces  (3) Jacks  (4) Aces & Jacks  (5) Sevens  (6) Eights'
-    loop do
-      c = Blackjack.getc.to_i
-      case c
-      when (1..6)
-        shoe.send("new_#{SHOES[c]}")
-      else
-        clear_draw_hands_new_deck_type
-      end
-      break if (1..6).include?(c)
-    end
-  end
-
-  def ask_insurance
-    puts ' Insurance?  (Y) Yes  (N) No'
-    loop do
-      c = Blackjack.getc
-      case c
-      when 'y'
-        insure_hand
-      when 'n'
-        no_insurance
-      else
-        clear_draw_hands_ask_insurance
-      end
-      break if %w[y n].include?(c)
-    end
   end
 
   def insure_hand
@@ -226,44 +179,18 @@ class Blackjack
     end
   end
 
-  def draw_bet_options
-    puts ' (D) Deal Hand  (B) Change Bet  (O) Options  (Q) Quit'
-    loop do
-      c = Blackjack.getc
-      case c
-      when 'd'
-        deal_new_hand
-      when 'b'
-        new_bet
-      when 'o'
-        clear_draw_hands_game_options
-      when 'q'
-        clear
-        exit
-      else
-        clear_draw_hands_bet_options
-      end
-      break if %w[d b o].include?(c)
-    end
-  end
-
   def all_bets
     player_hands.inject(0) { |sum, player_hand| sum + player_hand.bet }
   end
 
-  def save_game
-    File.open(SAVE_FILE, 'w') do |file|
-      file.puts "#{num_decks}|#{money}|#{current_bet}"
+  def normalize_current_bet
+    if current_bet < MIN_BET
+      self.current_bet = MIN_BET
+    elsif current_bet > MAX_BET
+      self.current_bet = MAX_BET
     end
-  end
 
-  def load_game
-    return unless File.readable?(SAVE_FILE)
-
-    a = File.read(SAVE_FILE).split('|')
-    self.num_decks = a[0].to_i
-    self.money = a[1].to_i
-    self.current_bet = a[2].to_i
+    self.current_bet = money if current_bet > money
   end
 
   def self.getc

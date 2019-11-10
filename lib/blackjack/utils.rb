@@ -1,14 +1,19 @@
 # frozen_string_literal: true
 
 module Utils
-  def normalize_current_bet
-    if current_bet < MIN_BET
-      self.current_bet = MIN_BET
-    elsif current_bet > MAX_BET
-      self.current_bet = MAX_BET
+  def save_game
+    File.open(SAVE_FILE, 'w') do |file|
+      file.puts "#{num_decks}|#{money}|#{current_bet}"
     end
+  end
 
-    self.current_bet = money if current_bet > money
+  def load_game
+    return unless File.readable?(SAVE_FILE)
+
+    a = File.read(SAVE_FILE).split('|')
+    self.num_decks = a[0].to_i
+    self.money = a[1].to_i
+    self.current_bet = a[2].to_i
   end
 
   def clear_draw_hands_new_num_decks
