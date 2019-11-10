@@ -15,6 +15,18 @@ class PlayerHand < Hand
     @stood = false
   end
 
+  def lost_str
+    busted? ? 'Busted!' : 'Lose!'
+  end
+
+  def won_str
+    blackjack? ? 'Blackjack!' : 'Won!'
+  end
+
+  def push_str
+    'Push'
+  end
+
   def pay(dealer_hand_value, dealer_busted)
     return if payed
 

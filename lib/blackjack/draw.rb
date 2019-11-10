@@ -21,11 +21,11 @@ module Draw
   def self.player_hand_status(player_hand)
     case player_hand.status
     when LOST
-      player_hand.busted? ? 'Busted!' : 'Lose!'
+      player_hand.lost_str
     when WON
-      player_hand.blackjack? ? 'Blackjack!' : 'Won!'
+      player_hand.won_str
     when PUSH
-      'Push'
+      player_hand.push_str
     else
       ''
     end
