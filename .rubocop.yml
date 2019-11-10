@@ -5,12 +5,6 @@ Documentation:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
-RSpec/Be:
-  Exclude:
-    - 'spec/**/*.rb'
-RSpec/NotToNot:
-  Exclude:
-    - 'spec/**/*.rb'
 Metrics/AbcSize:
   Exclude:
     - 'lib/**/*.rb'
@@ -25,7 +19,13 @@ Metrics/PerceivedComplexity:
     - 'lib/**/*.rb'
 Metrics/LineLength:
   Max: 120
-RSpec/MultipleExpectations:
-  Enabled: false
 Metrics/ClassLength:
   Max: 250
+RSpec/Be:
+  Exclude:
+    - 'spec/**/*.rb'
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/NotToNot:
+  Exclude:
+    - 'spec/**/*.rb'
