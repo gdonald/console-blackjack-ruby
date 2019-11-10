@@ -50,17 +50,19 @@ class PlayerHand < Hand
   end
 
   def value(count_method)
-    total = 0
-    cards.each do |card|
-      value = card.value + 1
-      v = value > 9 ? 10 : value
-      v = 11 if count_method == SOFT && v == 1 && total < 11
-      total += v
+    total = cards.inject(0) { |sum, card| sum + card_value(card, count_method, sum) }
+
+    if count_method == SOFT && total > 21
+      value(HARD)
+    else
+      total
     end
+  end
 
-    return value(HARD) if count_method == SOFT && total > 21
-
-    total
+  def card_value(card, count_method, total)
+    value = card.value + 1
+    v = value > 9 ? 10 : value
+    count_method == SOFT && v == 1 && total < 11 ? 11 : v
   end
 
   def done?
@@ -169,35 +171,37 @@ class PlayerHand < Hand
   end
 
   def action?
+    draw_actions
+    loop do
+      c = Blackjack.getc
+      case c
+      when 'h'
+        hit
+      when 's'
+        stand
+      when 'p'
+        blackjack.split_current_hand
+      when 'd'
+        dbl
+      else
+        clear_draw_hands_action
+      end
+      break if %w[h s p d].include?(c)
+    end
+  end
+
+  def clear_draw_hands_action
+    blackjack.clear
+    blackjack.draw_hands
+    action?
+  end
+
+  def draw_actions
     out = String.new(' ')
     out << '(H) Hit  ' if can_hit?
     out << '(S) Stand  ' if can_stand?
     out << '(P) Split  ' if can_split?
     out << '(D) Double  ' if can_dbl?
     puts out
-
-    loop do
-      br = false
-      case Blackjack.getc
-      when 'h'
-        br = true
-        hit
-      when 's'
-        br = true
-        stand
-      when 'p'
-        br = true
-        blackjack.split_current_hand
-      when 'd'
-        br = true
-        dbl
-      else
-        blackjack.clear
-        blackjack.draw_hands
-        action?
-      end
-
-      break if br
-    end
   end
 end
