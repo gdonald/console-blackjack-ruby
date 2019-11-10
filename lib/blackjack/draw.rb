@@ -43,7 +43,7 @@ module Draw
     out = String.new('')
     out << '-' if player_hand.status == LOST
     out << '+' if player_hand.status == WON
-    out << '$' << Blackjack.format_money(player_hand.bet / 100.0)
+    out << '$' << Format.money(player_hand.bet / 100.0)
     out << ' ⇐' if !player_hand.played && index == blackjack.current_hand
     out << '  '
     out

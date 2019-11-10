@@ -36,13 +36,6 @@ RSpec.describe Blackjack do
     end
   end
 
-  describe '#format_money' do
-    it 'returns a formatted string' do
-      str = described_class.format_money(1)
-      expect(str).to eq('1.00')
-    end
-  end
-
   describe '.all_bets?' do
     it 'returns 10' do
       blackjack.player_hands << player_hand << player_hand

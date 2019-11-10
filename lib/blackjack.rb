@@ -4,12 +4,17 @@ require_relative 'blackjack/shoe'
 require_relative 'blackjack/dealer_hand'
 require_relative 'blackjack/player_hand'
 require_relative 'blackjack/draw'
+require_relative 'blackjack/utils'
+require_relative 'blackjack/split_hand'
 
 SAVE_FILE = 'bj.txt'
 MIN_BET = 500
 MAX_BET = 10_000_000
 
 class Blackjack
+  include(SplitHand)
+  include Utils
+
   attr_accessor :shoe, :money, :player_hands, :dealer_hand, :num_decks, :current_bet, :current_hand
 
   def initialize
@@ -84,16 +89,6 @@ class Blackjack
     false
   end
 
-  def normalize_current_bet
-    if current_bet < MIN_BET
-      self.current_bet = MIN_BET
-    elsif current_bet > MAX_BET
-      self.current_bet = MAX_BET
-    end
-
-    self.current_bet = money if current_bet > money
-  end
-
   def pay_hands
     dealer_hand_value = dealer_hand.value(SOFT)
     dealer_busted = dealer_hand.busted?
@@ -116,13 +111,10 @@ class Blackjack
     clear
     out = String.new
     out << "\n Dealer:\n#{dealer_hand.draw}\n"
-
     out << "\n Player $"
-    out << Blackjack.format_money(money / 100.0)
+    out << Format.money(money / 100.0)
     out << ":\n"
-
     out << Draw.player_hands(self, player_hands)
-
     puts out
   end
 
@@ -130,7 +122,7 @@ class Blackjack
     clear
     draw_hands
 
-    puts " Current Bet: $#{Blackjack.format_money(current_bet / 100)}\n"
+    puts " Current Bet: $#{Format.money(current_bet / 100)}\n"
     print ' Enter New Bet: $'
 
     self.current_bet = STDIN.gets.to_i * 100
@@ -156,18 +148,6 @@ class Blackjack
       end
       break if %w[n t b].include?(c)
     end
-  end
-
-  def clear_draw_hands_new_num_decks
-    clear
-    draw_hands
-    new_num_decks
-  end
-
-  def clear_draw_hands_new_deck_type
-    clear
-    draw_hands
-    new_deck_type
   end
 
   def new_num_decks
@@ -214,12 +194,6 @@ class Blackjack
     end
   end
 
-  def clear_draw_hands_ask_insurance
-    clear
-    draw_hands
-    ask_insurance
-  end
-
   def insure_hand
     player_hand = current_player_hand
     player_hand.bet /= 2
@@ -252,53 +226,6 @@ class Blackjack
     end
   end
 
-  def play_dealer_hand
-    dealer_hand.play
-    draw_hands
-    draw_bet_options
-  end
-
-  def split_current_hand
-    if current_player_hand.can_split?
-      expand_split_hands
-      this_hand = split_hand
-
-      if this_hand.done?
-        this_hand.process
-      else
-        draw_hands_current_hand_action
-      end
-    else
-      draw_hands_current_hand_action
-    end
-  end
-
-  def split_hand
-    this_hand = player_hands[current_hand]
-    split_hand = player_hands[current_hand + 1]
-
-    split_hand.cards = []
-    split_hand.cards << this_hand.cards.last
-    this_hand.cards.pop
-
-    this_hand.cards << shoe.next_card
-    this_hand
-  end
-
-  def expand_split_hands
-    player_hands << PlayerHand.new(self, current_bet)
-    x = player_hands.size - 1
-    while x > current_hand
-      player_hands[x] = player_hands[x - 1].clone
-      x -= 1
-    end
-  end
-
-  def draw_hands_current_hand_action
-    draw_hands
-    current_player_hand.action?
-  end
-
   def draw_bet_options
     puts ' (D) Deal Hand  (B) Change Bet  (O) Options  (Q) Quit'
     loop do
@@ -318,18 +245,6 @@ class Blackjack
       end
       break if %w[d b o].include?(c)
     end
-  end
-
-  def clear_draw_hands_bet_options
-    clear
-    draw_hands
-    draw_bet_options
-  end
-
-  def clear_draw_hands_game_options
-    clear
-    draw_hands
-    draw_game_options
   end
 
   def all_bets
@@ -359,9 +274,5 @@ class Blackjack
       system('stty -raw echo')
     end
     c.chr
-  end
-
-  def self.format_money(value)
-    format('%.2f', value)
   end
 end
