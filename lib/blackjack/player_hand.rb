@@ -136,31 +136,35 @@ class PlayerHand < Hand
 
   def draw(index)
     out = String.new(' ')
-    cards.each do |card|
-      out << "#{card} "
-    end
+    out << draw_cards
+    out << draw_money_status(index)
+    out << draw_hand_status
+    out << "\n\n"
+    out
+  end
 
-    out << ' ⇒  ' << value(SOFT).to_s << '  '
+  def draw_hand_status
+    out = String.new('')
+    out << (busted? ? 'Busted!' : 'Lose!') if status == LOST
+    out << (blackjack? ? 'Blackjack!' : 'Won!') if status == WON
+    out << 'Push' if status == PUSH
+    out
+  end
 
-    if status == LOST
-      out << '-'
-    elsif status == WON
-      out << '+'
-    end
-
+  def draw_money_status(index)
+    out = String.new('')
+    out << '-' if status == LOST
+    out << '+' if status == WON
     out << '$' << Blackjack.format_money(bet / 100.0)
     out << ' ⇐' if !played && index == blackjack.current_hand
     out << '  '
+    out
+  end
 
-    if status == LOST
-      out << (busted? ? 'Busted!' : 'Lose!')
-    elsif status == WON
-      out << (blackjack? ? 'Blackjack!' : 'Won!')
-    elsif status == PUSH
-      out << 'Push'
-    end
-
-    out << "\n\n"
+  def draw_cards
+    out = String.new('')
+    out << cards.map { |card| "#{card} " }.join
+    out << ' ⇒  ' << value(SOFT).to_s << '  '
     out
   end
 
