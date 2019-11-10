@@ -135,8 +135,7 @@ class Blackjack
     puts " Current Bet: $#{Blackjack.format_money(current_bet / 100)}\n"
     print ' Enter New Bet: $'
 
-    tmp = STDIN.gets.to_i
-    self.current_bet = tmp * 100
+    self.current_bet = STDIN.gets.to_i * 100
 
     normalize_current_bet
     deal_new_hand
@@ -146,34 +145,34 @@ class Blackjack
     puts ' (N) Number of Decks  (T) Deck Type  (B) Back'
 
     loop do
-      br = false
-      case Blackjack.getc
+      c = Blackjack.getc
+      br = %w[n t b].include?(c)
+      case c
       when 'n'
-        br = true
-        clear
-        draw_hands
-        new_num_decks
+        clear_draw_hands_new_num_decks
       when 't'
-        br = true
-        clear
-        draw_hands
-        new_deck_type
-        clear
-        draw_hands
-        draw_bet_options
+        clear_draw_hands_new_deck_type
+        clear_draw_hands_bet_options
       when 'b'
-        br = true
-        clear
-        draw_hands
-        draw_bet_options
+        clear_draw_hands_bet_options
       else
-        clear
-        draw_hands
-        draw_game_options
+        clear_draw_hands_game_options
       end
 
       break if br
     end
+  end
+
+  def clear_draw_hands_new_num_decks
+    clear
+    draw_hands
+    new_num_decks
+  end
+
+  def clear_draw_hands_new_deck_type
+    clear
+    draw_hands
+    new_deck_type
   end
 
   def new_num_decks
@@ -182,10 +181,7 @@ class Blackjack
     self.num_decks = STDIN.gets.to_i
 
     normalize_num_decks
-
-    clear
-    draw_hands
-    draw_game_options
+    clear_draw_hands_game_options
   end
 
   def normalize_num_decks
@@ -204,9 +200,7 @@ class Blackjack
         br = true
         shoe.send("new_#{SHOES[c]}")
       else
-        clear
-        draw_hands
-        new_deck_type
+        clear_draw_hands_new_deck_type
       end
 
       break if br
@@ -307,30 +301,36 @@ class Blackjack
     puts ' (D) Deal Hand  (B) Change Bet  (O) Options  (Q) Quit'
 
     loop do
-      br = false
-      case Blackjack.getc
+      c = Blackjack.getc
+      br = %w[d b o].include?(c)
+      case c
       when 'd'
-        br = true
         deal_new_hand
       when 'b'
-        br = true
         new_bet
       when 'o'
-        br = true
-        clear
-        draw_hands
-        draw_game_options
+        clear_draw_hands_game_options
       when 'q'
         clear
         exit
       else
-        clear
-        draw_hands
-        draw_bet_options
+        clear_draw_hands_bet_options
       end
 
       break if br
     end
+  end
+
+  def clear_draw_hands_bet_options
+    clear
+    draw_hands
+    draw_bet_options
+  end
+
+  def clear_draw_hands_game_options
+    clear
+    draw_hands
+    draw_game_options
   end
 
   def all_bets
