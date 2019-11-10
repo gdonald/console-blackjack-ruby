@@ -19,15 +19,16 @@ module Draw
   end
 
   def self.player_hand_status(player_hand)
-    out = String.new('')
-    if player_hand.status == LOST
-      out << (player_hand.busted? ? 'Busted!' : 'Lose!')
-    elsif player_hand.status == WON
-      out << (player_hand.blackjack? ? 'Blackjack!' : 'Won!')
-    elsif player_hand.status == PUSH
-      out << 'Push'
+    case player_hand.status
+    when LOST
+      player_hand.busted? ? 'Busted!' : 'Lose!'
+    when WON
+      player_hand.blackjack? ? 'Blackjack!' : 'Won!'
+    when PUSH
+      'Push'
+    else
+      ''
     end
-    out
   end
 
   def self.player_hand_money(blackjack, player_hand, index)
