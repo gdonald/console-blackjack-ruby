@@ -2,8 +2,10 @@
 
 require_relative 'hand'
 require_relative 'player_hand_actions'
+require_relative 'player_hand_draw'
 
 class PlayerHand < Hand
+  include PlayerHandDraw
   include PlayerHandActions
 
   MAX_PLAYER_HANDS = 7

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'blackjack/dealer_hand'
-require_relative 'blackjack/draw'
+require_relative 'blackjack/format'
 require_relative 'blackjack/menus'
 require_relative 'blackjack/player_hand'
 require_relative 'blackjack/shoe'
@@ -116,8 +116,16 @@ class Blackjack
     out << "\n Player $"
     out << Format.money(money / 100.0)
     out << ":\n"
-    out << Draw.player_hands(self, player_hands)
+    out << draw_player_hands
     puts out
+  end
+
+  def draw_player_hands
+    out = String.new('')
+    player_hands.each_with_index do |player_hand, index|
+      out << player_hand.draw(index)
+    end
+    out
   end
 
   def new_bet
