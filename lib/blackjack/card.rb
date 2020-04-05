@@ -1,15 +1,16 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 class Card
-  attr_reader :value, :suite
+  attr_reader :value, :suit
 
-  def initialize(value, suite)
+  def initialize(value, suit)
     @value = value
-    @suite = suite
+    @suit = suit
   end
 
   def to_s
-    Card.faces[value][suite]
+    Card.faces[value][suit]
   end
 
   def ace?

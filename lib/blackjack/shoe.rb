@@ -40,9 +40,9 @@ class Shoe
   def new_regular
     self.cards = []
     num_decks.times do
-      (0..3).each do |suite_value|
+      (0..3).each do |suit_value|
         (0..12).each do |value|
-          cards << Card.new(value, suite_value)
+          cards << Card.new(value, suit_value)
         end
       end
     end
@@ -52,8 +52,8 @@ class Shoe
   def new_aces
     self.cards = []
     (num_decks * 10).times do
-      (0..3).each do |suite_value|
-        cards << Card.new(0, suite_value)
+      (0..3).each do |suit_value|
+        cards << Card.new(0, suit_value)
       end
     end
     shuffle
@@ -62,8 +62,8 @@ class Shoe
   def new_jacks
     self.cards = []
     (num_decks * 10).times do
-      (0..3).each do |suite_value|
-        cards << Card.new(10, suite_value)
+      (0..3).each do |suit_value|
+        cards << Card.new(10, suit_value)
       end
     end
     shuffle
@@ -72,9 +72,9 @@ class Shoe
   def new_aces_jacks
     self.cards = []
     (num_decks * 10).times do
-      (0..3).each do |suite_value|
-        cards << Card.new(0, suite_value)
-        cards << Card.new(10, suite_value)
+      (0..3).each do |suit_value|
+        cards << Card.new(0, suit_value)
+        cards << Card.new(10, suit_value)
       end
     end
     shuffle
@@ -83,8 +83,8 @@ class Shoe
   def new_sevens
     self.cards = []
     (num_decks * 10).times do
-      (0..3).each do |suite_value|
-        cards << Card.new(6, suite_value)
+      (0..3).each do |suit_value|
+        cards << Card.new(6, suit_value)
       end
     end
     shuffle
@@ -93,8 +93,8 @@ class Shoe
   def new_eights
     self.cards = []
     (num_decks * 10).times do
-      (0..3).each do |suite_value|
-        cards << Card.new(7, suite_value)
+      (0..3).each do |suit_value|
+        cards << Card.new(7, suit_value)
       end
     end
     shuffle

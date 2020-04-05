@@ -1,3 +1,4 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 RSpec.describe Card do
@@ -12,8 +13,8 @@ RSpec.describe Card do
       expect(card.value).to eq(0)
     end
 
-    it 'has a suite' do
-      expect(card.suite).to eq(0)
+    it 'has a suit' do
+      expect(card.suit).to eq(0)
     end
   end
 

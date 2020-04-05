@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :card do
     value { 0 }
-    suite { 0 }
+    suit { 0 }
 
     trait :ace do
       value { 0 }
@@ -37,6 +37,6 @@ FactoryBot.define do
       value { 9 }
     end
 
-    initialize_with { new(value, suite) }
+    initialize_with { new(value, suit) }
   end
 end
