@@ -157,8 +157,8 @@ RSpec.describe Shoe do
   end
 
   describe '.shuffle_specs' do
-    it 'returns when to shuffle' do
-      expect(described_class.shuffle_specs[0]).to eq([95, 8])
+    it 'returns spec for when to shuffle' do
+      expect(described_class.shuffle_specs).to eq([80, 81, 82, 84, 86, 89, 92, 95])
     end
   end
 end

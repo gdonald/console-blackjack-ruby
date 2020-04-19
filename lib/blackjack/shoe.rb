@@ -26,11 +26,7 @@ class Shoe
     cards_dealt = total_cards - cards.size
     used = cards_dealt / total_cards.to_f * 100.0
 
-    Shoe.shuffle_specs.each do |spec|
-      return true if used > spec.first && num_decks == spec.last
-    end
-
-    false
+    used > Shoe.shuffle_specs[num_decks - 1]
   end
 
   def shuffle
@@ -105,13 +101,6 @@ class Shoe
   end
 
   def self.shuffle_specs
-    [[95, 8],
-     [92, 7],
-     [89, 6],
-     [86, 5],
-     [84, 4],
-     [82, 3],
-     [81, 2],
-     [80, 1]]
+    [80, 81, 82, 84, 86, 89, 92, 95]
   end
 end
