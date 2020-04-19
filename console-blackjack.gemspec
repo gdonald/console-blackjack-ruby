@@ -4,8 +4,8 @@ require 'rake'
 
 Gem::Specification.new do |spec|
   spec.name = 'console-blackjack'
-  spec.version = '1.0.3'
-  spec.date = '2020-04-05'
+  spec.version = '1.0.4'
+  spec.date = '2020-04-19'
   spec.summary = 'Console Blackjack'
   spec.description = 'Blackjack for your console, full version.'
   spec.author = 'Greg Donald'
