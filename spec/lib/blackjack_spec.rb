@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe Blackjack do
-  let(:shoe) { build(:shoe, :new_regular) }
-  let(:blackjack) { build(:blackjack, shoe: shoe) }
+  let(:blackjack) { build(:blackjack, shoe: build(:shoe, :new_regular)) }
   let(:player_hand) { build(:player_hand, blackjack: blackjack) }
   let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
   let(:ace) { build(:card, :ace) }
-  let(:seven) { build(:card, :seven) }
-  let(:six) { build(:card, :six) }
   let(:ten) { build(:card, :ten) }
 
   describe '#current_player_hand' do
@@ -30,7 +27,7 @@ RSpec.describe Blackjack do
 
   describe '#getc' do
     it 'get a single character from stdin' do
-      allow(STDIN).to receive(:getc).and_return('q')
+      allow($stdin).to receive(:getc).and_return('q')
       c = described_class.getc
       expect(c).to eq('q')
     end
@@ -44,13 +41,24 @@ RSpec.describe Blackjack do
   end
 
   describe '#need_to_play_dealer_hand?' do
-    it 'returns false' do
-      expect(blackjack).to_not be_need_to_play_dealer_hand
+    before do
+      blackjack.player_hands << player_hand
     end
 
-    it 'returns true' do
-      blackjack.player_hands << player_hand
-      expect(blackjack).to be_need_to_play_dealer_hand
+    context 'when busted' do
+      it 'returns false' do
+        allow(player_hand).to receive(:blackjack?).and_return(false)
+        allow(player_hand).to receive(:busted?).and_return(true)
+        expect(blackjack).to_not be_need_to_play_dealer_hand
+      end
+    end
+
+    context 'when blackjack' do
+      it 'returns false' do
+        allow(player_hand).to receive(:busted?).and_return(false)
+        allow(player_hand).to receive(:blackjack?).and_return(true)
+        expect(blackjack).to_not be_need_to_play_dealer_hand
+      end
     end
   end
 
@@ -92,38 +100,46 @@ RSpec.describe Blackjack do
   end
 
   describe '#save_game' do
-    let(:file) { instance_double('File') }
-    let(:content) { "#{blackjack.num_decks}|#{blackjack.money}|#{blackjack.current_bet}" }
-
     it 'opens and put save file data' do
+      file = instance_double('File')
       allow(File).to receive(:open).with(SAVE_FILE, 'w').and_yield(file)
       allow(file).to receive(:puts)
       blackjack.save_game
-      expect(file).to have_received(:puts).with(content)
+      expect(file).to have_received(:puts).with("#{blackjack.num_decks}|#{blackjack.money}|#{blackjack.current_bet}")
     end
   end
 
   describe '#load_game' do
-    let(:content) { '8|2000|1000' }
+    context 'with a unreadable save file' do
+      it 'fails to load save file' do
+        allow(File).to receive(:read).with(SAVE_FILE)
+        allow(File).to receive(:readable?).with(SAVE_FILE).and_return(false)
 
-    before do
-      allow(File).to receive(:readable?).with(SAVE_FILE).and_return(true)
-      allow(File).to receive(:read).with(SAVE_FILE).and_return(content)
+        blackjack.load_game
+        expect(File).to_not have_received(:read).with(SAVE_FILE)
+      end
     end
 
-    it 'loads num_decks from save file data' do
-      blackjack.load_game
-      expect(blackjack.num_decks).to eq(8)
-    end
+    context 'with a readabale save file' do
+      before do
+        allow(File).to receive(:readable?).with(SAVE_FILE).and_return(true)
+        allow(File).to receive(:read).with(SAVE_FILE).and_return('8|2000|1000')
+      end
 
-    it 'loads money from save file data' do
-      blackjack.load_game
-      expect(blackjack.money).to eq(2000)
-    end
+      it 'loads num_decks from save file data' do
+        blackjack.load_game
+        expect(blackjack.num_decks).to eq(8)
+      end
 
-    it 'loads current_bet from save file data' do
-      blackjack.load_game
-      expect(blackjack.current_bet).to eq(1000)
+      it 'loads money from save file data' do
+        blackjack.load_game
+        expect(blackjack.money).to eq(2000)
+      end
+
+      it 'loads current_bet from save file data' do
+        blackjack.load_game
+        expect(blackjack.current_bet).to eq(1000)
+      end
     end
   end
 
@@ -257,19 +273,19 @@ RSpec.describe Blackjack do
         dealer_hand.cards << ten << ten
         allow(blackjack).to receive(:build_new_hand).and_return(player_hand)
         allow(player_hand).to receive(:action?)
-        allow(shoe).to receive(:new_regular)
+        allow(blackjack.shoe).to receive(:new_regular)
       end
 
       it 'shuffles' do
-        allow(shoe).to receive(:needs_to_shuffle?).and_return(true)
+        allow(blackjack.shoe).to receive(:needs_to_shuffle?).and_return(true)
         blackjack.deal_new_hand
-        expect(shoe).to have_received(:new_regular)
+        expect(blackjack.shoe).to have_received(:new_regular)
       end
 
       it 'does not shuffle' do
-        allow(shoe).to receive(:needs_to_shuffle?).and_return(false)
+        allow(blackjack.shoe).to receive(:needs_to_shuffle?).and_return(false)
         blackjack.deal_new_hand
-        expect(shoe).to_not have_received(:new_regular)
+        expect(blackjack.shoe).to_not have_received(:new_regular)
       end
     end
 
@@ -372,7 +388,7 @@ RSpec.describe Blackjack do
   describe '#new_bet' do
     before do
       blackjack.dealer_hand = dealer_hand
-      allow(STDIN).to receive(:gets).and_return('10')
+      allow($stdin).to receive(:gets).and_return('10')
       allow(described_class).to receive(:getc).and_return('s', 'q')
       allow(blackjack).to receive(:print)
       allow(blackjack).to receive(:puts)
@@ -526,7 +542,7 @@ RSpec.describe Blackjack do
   describe '#new_num_decks' do
     before do
       blackjack.dealer_hand = dealer_hand
-      allow(STDIN).to receive(:gets).and_return('2')
+      allow($stdin).to receive(:gets).and_return('2')
       allow(described_class).to receive(:getc).and_return('b', 'q')
       allow(blackjack).to receive(:print)
       allow(blackjack).to receive(:puts)
@@ -593,44 +609,44 @@ RSpec.describe Blackjack do
 
       it 'builds a new regular' do
         allow(described_class).to receive(:getc).and_return('1')
-        allow(shoe).to receive(:new_regular)
+        allow(blackjack.shoe).to receive(:new_regular)
         blackjack.new_deck_type
-        expect(shoe).to have_received(:new_regular)
+        expect(blackjack.shoe).to have_received(:new_regular)
       end
 
       it 'builds a new aces' do
         allow(described_class).to receive(:getc).and_return('2')
-        allow(shoe).to receive(:new_aces)
+        allow(blackjack.shoe).to receive(:new_aces)
         blackjack.new_deck_type
-        expect(shoe).to have_received(:new_aces)
+        expect(blackjack.shoe).to have_received(:new_aces)
       end
 
       it 'builds a new jacks' do
         allow(described_class).to receive(:getc).and_return('3')
-        allow(shoe).to receive(:new_jacks)
+        allow(blackjack.shoe).to receive(:new_jacks)
         blackjack.new_deck_type
-        expect(shoe).to have_received(:new_jacks)
+        expect(blackjack.shoe).to have_received(:new_jacks)
       end
 
       it 'builds a new aces_jacks' do
         allow(described_class).to receive(:getc).and_return('4')
-        allow(shoe).to receive(:new_aces_jacks)
+        allow(blackjack.shoe).to receive(:new_aces_jacks)
         blackjack.new_deck_type
-        expect(shoe).to have_received(:new_aces_jacks)
+        expect(blackjack.shoe).to have_received(:new_aces_jacks)
       end
 
       it 'builds a new sevens' do
         allow(described_class).to receive(:getc).and_return('5')
-        allow(shoe).to receive(:new_sevens)
+        allow(blackjack.shoe).to receive(:new_sevens)
         blackjack.new_deck_type
-        expect(shoe).to have_received(:new_sevens)
+        expect(blackjack.shoe).to have_received(:new_sevens)
       end
 
       it 'builds a new eights' do
         allow(described_class).to receive(:getc).and_return('6')
-        allow(shoe).to receive(:new_eights)
+        allow(blackjack.shoe).to receive(:new_eights)
         blackjack.new_deck_type
-        expect(shoe).to have_received(:new_eights)
+        expect(blackjack.shoe).to have_received(:new_eights)
       end
     end
 
@@ -765,7 +781,7 @@ RSpec.describe Blackjack do
 
     context 'when dealer hand is not blackjack' do
       before do
-        dealer_hand.cards << ace << seven
+        dealer_hand.cards << ace << build(:card, :seven)
         allow(blackjack).to receive(:play_dealer_hand)
       end
 
@@ -822,7 +838,7 @@ RSpec.describe Blackjack do
 
     context 'when current hand can split' do
       before do
-        player_hand.cards << six << six
+        player_hand.cards << build(:card, :six) << build(:card, :six)
         allow(described_class).to receive(:getc).and_return('s', 's')
         allow(blackjack).to receive(:draw_bet_options)
         allow(blackjack).to receive(:draw_hands)
@@ -843,7 +859,7 @@ RSpec.describe Blackjack do
 
     context 'when current hand cannot split' do
       before do
-        player_hand.cards << ace << six
+        player_hand.cards << ace << build(:card, :six)
         allow(described_class).to receive(:getc).and_return('s')
         allow(blackjack).to receive(:draw_bet_options)
         allow(blackjack).to receive(:draw_hands)

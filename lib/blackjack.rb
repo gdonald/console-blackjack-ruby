@@ -135,7 +135,7 @@ class Blackjack
     puts " Current Bet: $#{Format.money(current_bet / 100)}\n"
     print ' Enter New Bet: $'
 
-    self.current_bet = STDIN.gets.to_i * 100
+    self.current_bet = $stdin.gets.to_i * 100
 
     normalize_current_bet
     deal_new_hand
@@ -144,7 +144,7 @@ class Blackjack
   def new_num_decks
     puts " Number Of Decks: #{num_decks}"
     print ' New Number Of Decks (1-8): '
-    self.num_decks = STDIN.gets.to_i
+    self.num_decks = $stdin.gets.to_i
 
     normalize_num_decks
     clear_draw_hands_game_options
@@ -204,7 +204,7 @@ class Blackjack
   def self.getc
     begin
       system('stty raw -echo')
-      c = STDIN.getc
+      c = $stdin.getc
     ensure
       system('stty -raw echo')
     end

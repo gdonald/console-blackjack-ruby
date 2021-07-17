@@ -1,15 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe PlayerHand do
-  let(:shoe) { build(:shoe, :new_regular) }
-  let(:blackjack) { build(:blackjack, shoe: shoe) }
+  let(:blackjack) { build(:blackjack, shoe: build(:shoe, :new_regular)) }
   let(:player_hand) { build(:player_hand, blackjack: blackjack) }
   let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
   let(:ace) { build(:card, :ace) }
-  let(:six) { build(:card, :six) }
-  let(:seven) { build(:card, :seven) }
-  let(:eight) { build(:card, :eight) }
-  let(:nine) { build(:card, :nine) }
   let(:ten) { build(:card, :ten) }
 
   describe '.new' do
@@ -126,7 +121,7 @@ RSpec.describe PlayerHand do
 
     context 'when soft count of 21' do
       it 'returns true' do
-        player_hand.cards << ace << ace << nine
+        player_hand.cards << ace << ace << build(:card, :nine)
         expect(player_hand).to be_done
       end
     end
@@ -140,7 +135,7 @@ RSpec.describe PlayerHand do
 
     context 'when pair of sevens' do
       it 'returns false' do
-        player_hand.cards << seven << seven
+        player_hand.cards << build(:card, :seven) << build(:card, :seven)
         expect(player_hand).to_not be_done
       end
     end
@@ -163,7 +158,7 @@ RSpec.describe PlayerHand do
 
     context 'when not enough money' do
       it 'returns false' do
-        blackjack.money = 9999
+        blackjack.money = 499
         expect(player_hand).to_not be_can_split
       end
     end
@@ -177,14 +172,14 @@ RSpec.describe PlayerHand do
 
     context 'when card values do not match' do
       it 'returns false' do
-        player_hand.cards << seven << nine
+        player_hand.cards << build(:card, :seven) << build(:card, :nine)
         expect(player_hand).to_not be_can_split
       end
     end
 
     context 'when card values match' do
       it 'returns true' do
-        player_hand.cards << seven << seven
+        player_hand.cards << build(:card, :seven) << build(:card, :seven)
         expect(player_hand).to be_can_split
       end
     end
@@ -193,7 +188,7 @@ RSpec.describe PlayerHand do
   describe '#can_dbl?' do
     context 'when not enough money' do
       it 'returns false' do
-        blackjack.money = 9999
+        blackjack.money = 499
         expect(player_hand).to_not be_can_dbl
       end
     end
@@ -221,7 +216,7 @@ RSpec.describe PlayerHand do
 
     context 'when a pair of sixes' do
       it 'returns true' do
-        player_hand.cards << six << six
+        player_hand.cards << build(:card, :six) << build(:card, :six)
         expect(player_hand).to be_can_dbl
       end
     end
@@ -244,14 +239,14 @@ RSpec.describe PlayerHand do
 
     context 'when busted' do
       it 'returns false' do
-        player_hand.cards << eight << eight << eight
+        player_hand.cards << build(:card, :eight) << build(:card, :eight) << build(:card, :eight)
         expect(player_hand).to_not be_can_stand
       end
     end
 
     context 'when a pair of sixes' do
       it 'returns true' do
-        player_hand.cards << six << six
+        player_hand.cards << build(:card, :six) << build(:card, :six)
         expect(player_hand).to be_can_stand
       end
     end
@@ -281,21 +276,21 @@ RSpec.describe PlayerHand do
 
     context 'when busted' do
       it 'returns false' do
-        player_hand.cards << eight << eight << eight
+        player_hand.cards << build(:card, :eight) << build(:card, :eight) << build(:card, :eight)
         expect(player_hand).to_not be_can_hit
       end
     end
 
     context 'when a hard 21' do
       it 'returns false' do
-        player_hand.cards << seven << seven << seven
+        player_hand.cards << build(:card, :seven) << build(:card, :seven) << build(:card, :seven)
         expect(player_hand).to_not be_can_hit
       end
     end
 
     context 'when a pair of sixes' do
       it 'returns true' do
-        player_hand.cards << six << six
+        player_hand.cards << build(:card, :six) << build(:card, :six)
         expect(player_hand).to be_can_hit
       end
     end
@@ -494,6 +489,66 @@ RSpec.describe PlayerHand do
     end
   end
 
+  describe '#draw_actions' do
+    it 'can hit and stand' do
+      expect do
+        player_hand.draw_actions
+      end.to output(" (H) Hit  (S) Stand\n").to_stdout
+    end
+
+    it 'cannot hit' do
+      allow(player_hand).to receive(:can_hit?).and_return(false)
+      expect do
+        player_hand.draw_actions
+      end.to output(" (S) Stand\n").to_stdout
+    end
+
+    it 'cannot stand' do
+      allow(player_hand).to receive(:can_stand?).and_return(false)
+      expect do
+        player_hand.draw_actions
+      end.to output(" (H) Hit\n").to_stdout
+    end
+
+    it 'can split' do
+      allow(player_hand).to receive(:can_split?).and_return(true)
+      expect do
+        player_hand.draw_actions
+      end.to output(" (H) Hit  (S) Stand  (P) Split\n").to_stdout
+    end
+
+    it 'can double' do
+      allow(player_hand).to receive(:can_dbl?).and_return(true)
+      expect do
+        player_hand.draw_actions
+      end.to output(" (H) Hit  (S) Stand  (D) Double\n").to_stdout
+    end
+  end
+
+  describe '#draw_lost_str' do
+    it 'returns Busted!' do
+      allow(player_hand).to receive(:busted?).and_return(true)
+      expect(player_hand.draw_lost_str).to eq('Busted!')
+    end
+
+    it 'returns Lose!' do
+      allow(player_hand).to receive(:busted?).and_return(false)
+      expect(player_hand.draw_lost_str).to eq('Lose!')
+    end
+  end
+
+  describe '#draw_won_str' do
+    it 'returns Blackjack!' do
+      allow(player_hand).to receive(:blackjack?).and_return(true)
+      expect(player_hand.draw_won_str).to eq('Blackjack!')
+    end
+
+    it 'returns Won!' do
+      allow(player_hand).to receive(:blackjack?).and_return(false)
+      expect(player_hand.draw_won_str).to eq('Won!')
+    end
+  end
+
   describe '#pay' do
     it 'returns if already payed' do
       player_hand.payed = true
@@ -535,25 +590,25 @@ RSpec.describe PlayerHand do
       end
 
       it 'hand is lost' do
-        player_hand.cards << ten << seven
+        player_hand.cards << ten << build(:card, :seven)
         player_hand.pay(18, false)
         expect(player_hand.status).to eq(LOST)
       end
 
       it 'blackjack money is descreased by player hand bet' do
-        player_hand.cards << ten << seven
+        player_hand.cards << ten << build(:card, :seven)
         player_hand.pay(18, false)
         expect(blackjack.money).to eq(9500)
       end
 
       it 'hand is push' do
-        player_hand.cards << ten << seven
+        player_hand.cards << ten << build(:card, :seven)
         player_hand.pay(17, false)
         expect(player_hand.status).to eq(PUSH)
       end
 
       it 'blackjack money is unaltered' do
-        player_hand.cards << ten << seven
+        player_hand.cards << ten << build(:card, :seven)
         player_hand.pay(17, false)
         expect(blackjack.money).to eq(10_000)
       end

@@ -52,22 +52,19 @@ module Menus
 
   def draw_bet_options
     puts ' (D) Deal Hand  (B) Change Bet  (O) Options  (Q) Quit'
-    loop do
-      c = Blackjack.getc
-      case c
-      when 'd'
-        deal_new_hand
-      when 'b'
-        new_bet
-      when 'o'
-        clear_draw_hands_game_options
-      when 'q'
-        clear
-        exit
-      else
-        clear_draw_hands_bet_options
-      end
-      break if %w[d b o].include?(c)
+    c = Blackjack.getc
+    case c
+    when 'd'
+      deal_new_hand
+    when 'b'
+      new_bet
+    when 'o'
+      clear_draw_hands_game_options
+    when 'q'
+      clear
+      exit
+    else
+      clear_draw_hands_bet_options
     end
   end
 end

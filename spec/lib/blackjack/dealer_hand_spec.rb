@@ -5,11 +5,6 @@ RSpec.describe DealerHand do
   let(:blackjack) { build(:blackjack) }
   let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
   let(:ace) { build(:card, :ace) }
-  let(:five) { build(:card, :five) }
-  let(:six) { build(:card, :six) }
-  let(:seven) { build(:card, :seven) }
-  let(:eight) { build(:card, :eight) }
-  let(:nine) { build(:card, :nine) }
   let(:ten) { build(:card, :ten) }
 
   describe '.new' do
@@ -132,15 +127,13 @@ RSpec.describe DealerHand do
   end
 
   describe '#deal_required_cards' do
-    let(:shoe) { build(:shoe, :new_regular) }
-
     before do
-      blackjack.shoe = shoe
+      blackjack.shoe = build(:shoe, :new_regular)
     end
 
     context 'when soft is < 18' do
       it 'deals cards' do
-        dealer_hand.cards << ace << seven
+        dealer_hand.cards << ace << build(:card, :seven)
         dealer_hand.deal_required_cards
         expect(dealer_hand.cards.size >= 3).to be_truthy
       end
@@ -148,7 +141,7 @@ RSpec.describe DealerHand do
 
     context 'when hard is < 17' do
       it 'deals cards' do
-        dealer_hand.cards << ace << ten << five
+        dealer_hand.cards << ace << ten << build(:card, :five)
         dealer_hand.deal_required_cards
         expect(dealer_hand.cards.size >= 4).to be_truthy
       end

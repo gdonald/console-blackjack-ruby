@@ -92,21 +92,18 @@ class PlayerHand < Hand
 
   def action?
     draw_actions
-    loop do
-      c = Blackjack.getc
-      case c
-      when 'h'
-        hit
-      when 's'
-        stand
-      when 'p'
-        blackjack.split_current_hand
-      when 'd'
-        dbl
-      else
-        clear_draw_hands_action
-      end
-      break if %w[h s p d].include?(c)
+    c = Blackjack.getc
+    case c
+    when 'h'
+      hit
+    when 's'
+      stand
+    when 'p'
+      blackjack.split_current_hand
+    when 'd'
+      dbl
+    else
+      clear_draw_hands_action
     end
   end
 
@@ -117,11 +114,11 @@ class PlayerHand < Hand
   end
 
   def draw_actions
-    out = String.new(' ')
-    out << '(H) Hit  ' if can_hit?
-    out << '(S) Stand  ' if can_stand?
-    out << '(P) Split  ' if can_split?
-    out << '(D) Double  ' if can_dbl?
-    puts out
+    actions = []
+    actions << '(H) Hit' if can_hit?
+    actions << '(S) Stand' if can_stand?
+    actions << '(P) Split' if can_split?
+    actions << '(D) Double' if can_dbl?
+    puts " #{actions.join('  ')}"
   end
 end
