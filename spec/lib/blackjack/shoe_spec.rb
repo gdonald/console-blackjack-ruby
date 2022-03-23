@@ -3,6 +3,12 @@
 RSpec.describe Shoe do
   let(:shoe) { build(:shoe) }
 
+  describe 'CARDS_PER_DECK' do
+    it 'returns 52' do
+      expect(described_class::CARDS_PER_DECK).to eq(52)
+    end
+  end
+
   describe '.new' do
     it 'creates a shoe' do
       expect(shoe).to be
@@ -58,7 +64,7 @@ RSpec.describe Shoe do
 
     it 'creates a shoe' do
       shoe.new_regular
-      expect(shoe.cards.size).to eq(52)
+      expect(shoe.cards.size).to eq(Shoe::CARDS_PER_DECK)
     end
 
     it 'calls shuffle' do
@@ -73,7 +79,7 @@ RSpec.describe Shoe do
 
     it 'creates a shoe' do
       shoe.new_aces
-      expect(shoe.cards.size).to eq(40)
+      expect(shoe.cards.size).to eq(Shoe::CARDS_PER_DECK)
     end
 
     it 'calls shuffle' do
@@ -88,7 +94,7 @@ RSpec.describe Shoe do
 
     it 'creates a shoe' do
       shoe.new_jacks
-      expect(shoe.cards.size).to eq(40)
+      expect(shoe.cards.size).to eq(Shoe::CARDS_PER_DECK)
     end
 
     it 'calls shuffle' do
@@ -103,7 +109,7 @@ RSpec.describe Shoe do
 
     it 'creates a shoe' do
       shoe.new_aces_jacks
-      expect(shoe.cards.size).to eq(80)
+      expect(shoe.cards.size).to eq(Shoe::CARDS_PER_DECK)
     end
 
     it 'calls shuffle' do
@@ -118,7 +124,7 @@ RSpec.describe Shoe do
 
     it 'creates a shoe' do
       shoe.new_sevens
-      expect(shoe.cards.size).to eq(40)
+      expect(shoe.cards.size).to eq(Shoe::CARDS_PER_DECK)
     end
 
     it 'calls shuffle' do
@@ -133,7 +139,7 @@ RSpec.describe Shoe do
 
     it 'creates a shoe' do
       shoe.new_eights
-      expect(shoe.cards.size).to eq(40)
+      expect(shoe.cards.size).to eq(Shoe::CARDS_PER_DECK)
     end
 
     it 'calls shuffle' do

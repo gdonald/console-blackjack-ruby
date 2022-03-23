@@ -12,6 +12,8 @@ SHOES = {
 }.freeze
 
 class Shoe
+  CARDS_PER_DECK = 52
+
   attr_accessor :num_decks, :cards
 
   def initialize(num_decks = 1)
@@ -22,7 +24,7 @@ class Shoe
   def needs_to_shuffle?
     return true if cards.size.zero?
 
-    total_cards = num_decks * 52
+    total_cards = num_decks * CARDS_PER_DECK
     cards_dealt = total_cards - cards.size
     used = cards_dealt / total_cards.to_f * 100.0
 
@@ -45,55 +47,40 @@ class Shoe
     shuffle
   end
 
-  def new_aces
+  def new_irregular(values = [])
     self.cards = []
-    (num_decks * 10).times do
+    while cards.count < Shoe::CARDS_PER_DECK
       (0..3).each do |suit_value|
-        cards << Card.new(0, suit_value)
+        next if cards.count >= Shoe::CARDS_PER_DECK
+
+        values.each do |value|
+          next if cards.count >= Shoe::CARDS_PER_DECK
+
+          cards << Card.new(value, suit_value)
+        end
       end
     end
     shuffle
+  end
+
+  def new_aces
+    new_irregular([0])
   end
 
   def new_jacks
-    self.cards = []
-    (num_decks * 10).times do
-      (0..3).each do |suit_value|
-        cards << Card.new(10, suit_value)
-      end
-    end
-    shuffle
+    new_irregular([10])
   end
 
   def new_aces_jacks
-    self.cards = []
-    (num_decks * 10).times do
-      (0..3).each do |suit_value|
-        cards << Card.new(0, suit_value)
-        cards << Card.new(10, suit_value)
-      end
-    end
-    shuffle
+    new_irregular([0, 10])
   end
 
   def new_sevens
-    self.cards = []
-    (num_decks * 10).times do
-      (0..3).each do |suit_value|
-        cards << Card.new(6, suit_value)
-      end
-    end
-    shuffle
+    new_irregular([6])
   end
 
   def new_eights
-    self.cards = []
-    (num_decks * 10).times do
-      (0..3).each do |suit_value|
-        cards << Card.new(7, suit_value)
-      end
-    end
-    shuffle
+    new_irregular([7])
   end
 
   def next_card
