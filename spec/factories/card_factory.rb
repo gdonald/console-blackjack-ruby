@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :card do
+    blackjack { nil }
     value { 0 }
     suit { 0 }
 
@@ -37,6 +38,6 @@ FactoryBot.define do
       value { 9 }
     end
 
-    initialize_with { new(value, suit) }
+    initialize_with { new(blackjack, value, suit) }
   end
 end

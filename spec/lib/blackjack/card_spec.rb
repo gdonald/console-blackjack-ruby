@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Card do
-  let(:card) { build(:card) }
+  let(:blackjack) { build(:blackjack) }
+  let(:card) { build(:card, blackjack: blackjack) }
 
   describe '.new' do
     it 'creates a card' do
@@ -18,8 +19,20 @@ RSpec.describe Card do
   end
 
   describe '#to_s' do
-    it 'returns a string value' do
-      expect(card.to_s).to eq('🂡')
+    context 'with regular faces' do
+      it 'returns a string value' do
+        expect(card.to_s).to eq('🂡')
+      end
+    end
+
+    context 'with alternate faces' do
+      before do
+        blackjack.face_type = 2
+      end
+
+      it 'returns a string value' do
+        expect(card.to_s).to eq('A♠')
+      end
     end
   end
 

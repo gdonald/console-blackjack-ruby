@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'pry'
+
 require_relative 'blackjack/dealer_hand'
 require_relative 'blackjack/format'
 require_relative 'blackjack/menus'
@@ -17,17 +19,18 @@ class Blackjack
   include SplitHand
   include Utils
 
-  attr_accessor :shoe, :money, :player_hands, :dealer_hand, :num_decks, :current_bet, :current_hand
+  attr_accessor :shoe, :money, :player_hands, :dealer_hand, :num_decks, :face_type, :current_bet, :current_hand
 
   def initialize
     @num_decks = 1
+    @face_type = 1
     @money = 10_000
     @current_bet = 500
   end
 
   def run
     load_game
-    @shoe = Shoe.new(num_decks)
+    @shoe = Shoe.new(self, num_decks)
     deal_new_hand
   end
 

@@ -4,8 +4,8 @@ RSpec.describe Blackjack do
   let(:blackjack) { build(:blackjack, shoe: build(:shoe, :new_regular)) }
   let(:player_hand) { build(:player_hand, blackjack: blackjack) }
   let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
-  let(:ace) { build(:card, :ace) }
-  let(:ten) { build(:card, :ten) }
+  let(:ace) { build(:card, :ace, blackjack: blackjack) }
+  let(:ten) { build(:card, :ten, blackjack: blackjack) }
 
   describe '#current_player_hand' do
     it 'returns the current hand' do
@@ -446,7 +446,7 @@ RSpec.describe Blackjack do
 
       it 'draws the blackjack options' do
         blackjack.draw_game_options
-        expected = ' (N) Number of Decks  (T) Deck Type  (B) Back'
+        expected = ' (N) Number of Decks  (T) Deck Type  (F) Face Type  (B) Back'
         expect(blackjack).to have_received(:puts).with(expected)
       end
 
@@ -489,6 +489,37 @@ RSpec.describe Blackjack do
       it 'updates deck type' do
         blackjack.draw_game_options
         expect(blackjack).to have_received(:new_deck_type)
+      end
+
+      it 'draws the bet options' do
+        blackjack.draw_game_options
+        expect(blackjack).to have_received(:draw_bet_options)
+      end
+    end
+
+    context 'when updating the face type' do
+      before do
+        allow(described_class).to receive(:getc).and_return('f')
+        allow(blackjack).to receive(:clear)
+        allow(blackjack).to receive(:draw_hands)
+        allow(blackjack).to receive(:new_face_type)
+        allow(blackjack).to receive(:draw_bet_options)
+         allow(blackjack).to receive(:puts)
+      end
+
+      it 'clears the screen' do
+        blackjack.draw_game_options
+        expect(blackjack).to have_received(:clear).twice
+      end
+
+      it 'draws the hands' do
+        blackjack.draw_game_options
+        expect(blackjack).to have_received(:draw_hands).twice
+      end
+
+      it 'updates face type' do
+        blackjack.draw_game_options
+        expect(blackjack).to have_received(:new_face_type)
       end
 
       it 'draws the bet options' do
@@ -660,9 +691,47 @@ RSpec.describe Blackjack do
     end
   end
 
+  describe '#new_face_type' do
+    before do
+      blackjack.dealer_hand = dealer_hand
+      allow(blackjack).to receive(:puts)
+    end
+
+    context 'when choosing a new face type' do
+      it 'draws options' do
+        allow(described_class).to receive(:getc).and_return('1')
+        blackjack.new_face_type
+        expected = ' (1) 🂡  (2) A♠'
+        expect(blackjack).to have_received(:puts).with(expected)
+      end
+
+      it 'sets regular faces' do
+        allow(described_class).to receive(:getc).and_return('1')
+        allow(blackjack).to receive(:face_type=).with(1)
+        blackjack.new_face_type
+        expect(blackjack).to have_received(:face_type=).with(1)
+      end
+
+      it 'sets alternate faces' do
+        allow(described_class).to receive(:getc).and_return('2')
+        allow(blackjack).to receive(:face_type=).with(2)
+        blackjack.new_face_type
+        expect(blackjack).to have_received(:face_type=).with(2)
+      end
+    end
+
+    context 'when invalid input' do
+      it 'gets the action again' do
+        allow(described_class).to receive(:getc).and_return('x', '1')
+        allow(blackjack).to receive(:draw_hands)
+        blackjack.new_face_type
+        expect(blackjack).to have_received(:draw_hands)
+      end
+    end
+  end
+
   describe '#ask_insurance' do
     before do
-      # blackjack.dealer_hand = dealer_hand
       allow(blackjack).to receive(:puts)
       allow(blackjack).to receive(:insure_hand)
       allow(blackjack).to receive(:no_insurance)

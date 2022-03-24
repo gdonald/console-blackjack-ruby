@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Shoe do
-  let(:shoe) { build(:shoe) }
+  let(:blackjack) { build(:blackjack) }
+  let(:shoe) { build(:shoe, blackjack: blackjack) }
 
   describe 'CARDS_PER_DECK' do
     it 'returns 52' do
@@ -27,7 +28,7 @@ RSpec.describe Shoe do
     end
 
     context 'with a new regular shoe' do
-      let(:shoe) { build(:shoe, :new_regular) }
+      let(:shoe) { build(:shoe, :new_regular, blackjack: blackjack) }
 
       it 'returns false' do
         expect(shoe).to_not be_needs_to_shuffle
@@ -35,7 +36,7 @@ RSpec.describe Shoe do
     end
 
     context 'with 42 cards being dealt' do
-      let(:shoe) { build(:shoe, :new_regular) }
+      let(:shoe) { build(:shoe, :new_regular, blackjack: blackjack) }
 
       before do
         42.times { shoe.next_card }
@@ -48,7 +49,7 @@ RSpec.describe Shoe do
   end
 
   describe '#shuffle' do
-    let(:shoe) { build(:shoe) }
+    let(:shoe) { build(:shoe, blackjack: blackjack) }
 
     it 'calls shuffle' do
       cards = instance_double(Array)
@@ -60,7 +61,7 @@ RSpec.describe Shoe do
   end
 
   describe '#new_regular' do
-    let(:shoe) { build(:shoe) }
+    let(:shoe) { build(:shoe, blackjack: blackjack) }
 
     it 'creates a shoe' do
       shoe.new_regular
@@ -75,7 +76,7 @@ RSpec.describe Shoe do
   end
 
   describe '#new_aces' do
-    let(:shoe) { build(:shoe) }
+    let(:shoe) { build(:shoe, blackjack: blackjack) }
 
     it 'creates a shoe' do
       shoe.new_aces
@@ -90,7 +91,7 @@ RSpec.describe Shoe do
   end
 
   describe '#new_jacks' do
-    let(:shoe) { build(:shoe) }
+    let(:shoe) { build(:shoe, blackjack: blackjack) }
 
     it 'creates a shoe' do
       shoe.new_jacks
@@ -105,7 +106,7 @@ RSpec.describe Shoe do
   end
 
   describe '#new_aces_jacks' do
-    let(:shoe) { build(:shoe) }
+    let(:shoe) { build(:shoe, blackjack: blackjack) }
 
     it 'creates a shoe' do
       shoe.new_aces_jacks
@@ -120,7 +121,7 @@ RSpec.describe Shoe do
   end
 
   describe '#new_sevens' do
-    let(:shoe) { build(:shoe) }
+    let(:shoe) { build(:shoe, blackjack: blackjack) }
 
     it 'creates a shoe' do
       shoe.new_sevens
@@ -135,7 +136,7 @@ RSpec.describe Shoe do
   end
 
   describe '#new_eights' do
-    let(:shoe) { build(:shoe) }
+    let(:shoe) { build(:shoe, blackjack: blackjack) }
 
     it 'creates a shoe' do
       shoe.new_eights
@@ -150,7 +151,7 @@ RSpec.describe Shoe do
   end
 
   describe '#next_card' do
-    let(:shoe) { build(:shoe, :new_regular) }
+    let(:shoe) { build(:shoe, :new_regular, blackjack: blackjack) }
 
     it 'removes the next card' do
       shoe.next_card

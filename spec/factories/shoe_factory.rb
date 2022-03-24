@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :shoe do
+    blackjack { nil }
     num_decks { 1 }
     cards { [] }
 
@@ -9,6 +10,6 @@ FactoryBot.define do
       after(:build, &:new_regular)
     end
 
-    initialize_with { new(num_decks) }
+    initialize_with { new(blackjack, num_decks) }
   end
 end

@@ -31,6 +31,11 @@ module Utils
     new_deck_type
   end
 
+  def clear_draw_hands_new_face_type
+    clear_draw_hands
+    new_face_type
+  end
+
   def clear_draw_hands_ask_insurance
     clear_draw_hands
     ask_insurance

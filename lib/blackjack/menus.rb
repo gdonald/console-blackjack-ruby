@@ -2,7 +2,7 @@
 
 module Menus
   def draw_game_options
-    puts ' (N) Number of Decks  (T) Deck Type  (B) Back'
+    puts ' (N) Number of Decks  (T) Deck Type  (F) Face Type  (B) Back'
     loop do
       c = Blackjack.getc
       case c
@@ -11,12 +11,15 @@ module Menus
       when 't'
         clear_draw_hands_new_deck_type
         clear_draw_hands_bet_options
+      when 'f'
+        clear_draw_hands_new_face_type
+        clear_draw_hands_bet_options
       when 'b'
         clear_draw_hands_bet_options
       else
         clear_draw_hands_game_options
       end
-      break if %w[n t b].include?(c)
+      break if %w[n t b f].include?(c)
     end
   end
 
@@ -31,6 +34,20 @@ module Menus
         clear_draw_hands_new_deck_type
       end
       break if (1..6).include?(c)
+    end
+  end
+
+  def new_face_type
+    puts ' (1) 🂡  (2) A♠'
+    loop do
+      c = Blackjack.getc.to_i
+      case c
+      when (1..2)
+        self.face_type = c
+      else
+        clear_draw_hands_new_face_type
+      end
+      break if (1..2).include?(c)
     end
   end
 

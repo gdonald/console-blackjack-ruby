@@ -14,9 +14,10 @@ SHOES = {
 class Shoe
   CARDS_PER_DECK = 52
 
-  attr_accessor :num_decks, :cards
+  attr_accessor :blackjack, :num_decks, :cards
 
-  def initialize(num_decks = 1)
+  def initialize(blackjack, num_decks = 1)
+    @blackjack = blackjack
     @num_decks = num_decks
     @cards = []
   end
@@ -40,7 +41,7 @@ class Shoe
     num_decks.times do
       (0..3).each do |suit_value|
         (0..12).each do |value|
-          cards << Card.new(value, suit_value)
+          cards << Card.new(blackjack, value, suit_value)
         end
       end
     end
@@ -54,9 +55,7 @@ class Shoe
         next if cards.count >= Shoe::CARDS_PER_DECK
 
         values.each do |value|
-          next if cards.count >= Shoe::CARDS_PER_DECK
-
-          cards << Card.new(value, suit_value)
+          cards << Card.new(blackjack, value, suit_value)
         end
       end
     end

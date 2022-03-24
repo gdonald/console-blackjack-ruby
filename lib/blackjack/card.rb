@@ -1,15 +1,18 @@
 # frozen_string_literal: true
 
 class Card
-  attr_reader :value, :suit
+  attr_reader :blackjack, :value, :suit
 
-  def initialize(value, suit)
+  def initialize(blackjack, value, suit)
+    @blackjack = blackjack
     @value = value
     @suit = suit
   end
 
   def to_s
-    Card.faces[value][suit]
+    return Card.faces[value][suit] if blackjack.face_type == 1
+
+    Card.faces2[value][suit]
   end
 
   def ace?
@@ -31,5 +34,15 @@ class Card
      %w[🂥 🂵 🃅 🃕], %w[🂦 🂶 🃆 🃖], %w[🂧 🂷 🃇 🃗], %w[🂨 🂸 🃈 🃘],
      %w[🂩 🂹 🃉 🃙], %w[🂪 🂺 🃊 🃚], %w[🂫 🂻 🃋 🃛], %w[🂭 🂽 🃍 🃝],
      %w[🂮 🂾 🃎 🃞], %w[🂠]]
+  end
+
+  def self.faces2
+    [%w[A♠ A♥ A♣ A♦], %w[2♠ 2♥ 2♣ 2♦],
+     %w[3♠ 3♥ 3♣ 3♦], %w[4♠ 4♥ 4♣ 4♦],
+     %w[5♠ 5♥ 5♣ 5♦], %w[6♠ 6♥ 6♣ 6♦],
+     %w[7♠ 7♥ 7♣ 7♦], %w[8♠ 8♥ 8♣ 8♦],
+     %w[9♠ 9♥ 9♣ 9♦], %w[T♠ T♥ T♣ T♦],
+     %w[J♠ J♥ J♣ J♦], %w[Q♠ Q♥ Q♣ Q♦],
+     %w[K♠ K♥ K♣ K♦], %w[??]]
   end
 end

@@ -37,7 +37,7 @@ class DealerHand < Hand
   def draw
     out = String.new(' ')
     cards.each_with_index do |card, index|
-      out << (index == 1 && hide_down_card ? Card.faces[13][0] : card).to_s
+      out << (index == 1 && hide_down_card ? Card.new(blackjack, 13, 0) : card).to_s
       out << ' '
     end
     out << ' ⇒  ' << value(SOFT).to_s
