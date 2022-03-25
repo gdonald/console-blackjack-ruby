@@ -100,12 +100,17 @@ RSpec.describe Blackjack do
   end
 
   describe '#save_game' do
-    it 'opens and put save file data' do
-      file = instance_double('File')
+    let(:file) { instance_double('File') }
+
+    before do
       allow(File).to receive(:open).with(SAVE_FILE, 'w').and_yield(file)
       allow(file).to receive(:puts)
+    end
+
+    it 'opens and put save file data' do
       blackjack.save_game
-      expect(file).to have_received(:puts).with("#{blackjack.num_decks}|#{blackjack.money}|#{blackjack.current_bet}")
+      expected = "#{blackjack.num_decks}|#{blackjack.face_type}|#{blackjack.money}|#{blackjack.current_bet}"
+      expect(file).to have_received(:puts).with(expected)
     end
   end
 
@@ -123,12 +128,17 @@ RSpec.describe Blackjack do
     context 'with a readabale save file' do
       before do
         allow(File).to receive(:readable?).with(SAVE_FILE).and_return(true)
-        allow(File).to receive(:read).with(SAVE_FILE).and_return('8|2000|1000')
+        allow(File).to receive(:read).with(SAVE_FILE).and_return('8|1|2000|1000')
       end
 
       it 'loads num_decks from save file data' do
         blackjack.load_game
         expect(blackjack.num_decks).to eq(8)
+      end
+
+      it 'loads face_type from save file data' do
+        blackjack.load_game
+        expect(blackjack.face_type).to eq(1)
       end
 
       it 'loads money from save file data' do
@@ -504,7 +514,7 @@ RSpec.describe Blackjack do
         allow(blackjack).to receive(:draw_hands)
         allow(blackjack).to receive(:new_face_type)
         allow(blackjack).to receive(:draw_bet_options)
-         allow(blackjack).to receive(:puts)
+        allow(blackjack).to receive(:puts)
       end
 
       it 'clears the screen' do
@@ -707,16 +717,20 @@ RSpec.describe Blackjack do
 
       it 'sets regular faces' do
         allow(described_class).to receive(:getc).and_return('1')
+        allow(blackjack).to receive(:save_game)
         allow(blackjack).to receive(:face_type=).with(1)
         blackjack.new_face_type
         expect(blackjack).to have_received(:face_type=).with(1)
+        expect(blackjack).to have_received(:save_game)
       end
 
       it 'sets alternate faces' do
         allow(described_class).to receive(:getc).and_return('2')
+        allow(blackjack).to receive(:save_game)
         allow(blackjack).to receive(:face_type=).with(2)
         blackjack.new_face_type
         expect(blackjack).to have_received(:face_type=).with(2)
+        expect(blackjack).to have_received(:save_game)
       end
     end
 

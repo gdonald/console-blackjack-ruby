@@ -74,19 +74,19 @@ RSpec.describe DealerHand do
   end
 
   describe '#draw' do
-    it 'returns " 🂪 🂠  ⇒  10"' do
+    it 'returns " 🂪 🂠 ⇒ 10"' do
       dealer_hand.cards << ten << ace
       expected = ' 🂪 🂠  ⇒  10'
       expect(dealer_hand.draw).to eq(expected)
     end
 
-    it 'returns " 🂡 🂠  ⇒  11"' do
+    it 'returns " 🂡 🂠 ⇒ 11"' do
       dealer_hand.cards << ace << ten
       expected = ' 🂡 🂠  ⇒  11'
       expect(dealer_hand.draw).to eq(expected)
     end
 
-    it 'returns " 🂡 🂪  ⇒  21"' do
+    it 'returns " 🂡 🂪 ⇒ 21"' do
       dealer_hand.cards << ace << ten
       dealer_hand.hide_down_card = false
       expected = ' 🂡 🂪  ⇒  21'

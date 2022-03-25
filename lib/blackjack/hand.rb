@@ -28,6 +28,6 @@ class Hand
   def blackjack?
     return false if cards.size != 2
 
-    cards.first.ace? && cards.last.ten? || cards.first.ten? && cards.last.ace?
+    (cards.first.ace? && cards.last.ten?) || (cards.first.ten? && cards.last.ace?)
   end
 end

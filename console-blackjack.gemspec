@@ -18,7 +18,8 @@ Gem::Specification.new do |spec|
                         'spec/**/*.rb'].to_a
   spec.homepage = 'https://github.com/gdonald/console-blackjack-ruby'
   spec.metadata = {
-    'source_code_uri' => 'https://github.com/gdonald/console-blackjack-ruby'
+    'source_code_uri' => 'https://github.com/gdonald/console-blackjack-ruby',
+    'rubygems_mfa_required' => 'true'
   }
   spec.license = 'MIT'
   spec.post_install_message = "\nType `console-blackjack` to run!\n\n"

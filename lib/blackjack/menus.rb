@@ -44,6 +44,7 @@ module Menus
       case c
       when (1..2)
         self.face_type = c
+        save_game
       else
         clear_draw_hands_new_face_type
       end
