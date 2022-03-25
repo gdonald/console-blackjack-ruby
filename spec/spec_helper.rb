@@ -7,9 +7,6 @@ SimpleCov.start do
   primary_coverage :branch
 end
 
-require 'coveralls'
-Coveralls.wear!
-
 Dir.glob(File.join(File.dirname(__FILE__),
                    "..#{File::SEPARATOR}lib", '**',
                    '*.rb')).sort.each(&method(:require))
