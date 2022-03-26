@@ -25,7 +25,7 @@ module Utils
 
   def clear_draw_hands_new_num_decks
     clear_draw_hands
-    new_num_decks
+    new_num_decks($stdin)
   end
 
   def clear_draw_hands_new_deck_type

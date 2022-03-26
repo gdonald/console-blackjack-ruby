@@ -92,7 +92,7 @@ class PlayerHand < Hand
 
   def action?
     draw_actions
-    c = Blackjack.getc
+    c = Blackjack.getc($stdin)
     case c
     when 'h'
       hit

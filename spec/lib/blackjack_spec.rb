@@ -6,6 +6,7 @@ RSpec.describe Blackjack do
   let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
   let(:ace) { build(:card, :ace, blackjack: blackjack) }
   let(:ten) { build(:card, :ten, blackjack: blackjack) }
+  let(:input) { StringIO.new }
 
   describe '#current_player_hand' do
     it 'returns the current hand' do
@@ -27,8 +28,8 @@ RSpec.describe Blackjack do
 
   describe '#getc' do
     it 'get a single character from stdin' do
-      allow($stdin).to receive(:getc).and_return('q')
-      c = described_class.getc
+      allow(input).to receive(:getc).and_return('q')
+      c = described_class.getc(input)
       expect(c).to eq('q')
     end
   end
@@ -399,7 +400,7 @@ RSpec.describe Blackjack do
   describe '#new_bet' do
     before do
       blackjack.dealer_hand = dealer_hand
-      allow($stdin).to receive(:gets).and_return('10')
+      allow(input).to receive(:gets).and_return('10')
       allow(described_class).to receive(:getc).and_return('s', 'q')
       allow(blackjack).to receive(:print)
       allow(blackjack).to receive(:puts)
@@ -410,33 +411,33 @@ RSpec.describe Blackjack do
     end
 
     it 'clears the screen' do
-      blackjack.new_bet
+      blackjack.new_bet(input)
       expect(blackjack).to have_received(:clear)
     end
 
     it 'draws hands' do
-      blackjack.new_bet
+      blackjack.new_bet(input)
       expect(blackjack).to have_received(:draw_hands)
     end
 
     it 'draws the current bet' do
-      blackjack.new_bet
+      blackjack.new_bet(input)
       expected = " Current Bet: $5.00\n"
       expect(blackjack).to have_received(:puts).with(expected)
     end
 
     it 'updates current bet' do
-      blackjack.new_bet
+      blackjack.new_bet(input)
       expect(blackjack.current_bet).to eq(1000)
     end
 
     it 'normalizes the bet' do
-      blackjack.new_bet
+      blackjack.new_bet(input)
       expect(blackjack).to have_received(:normalize_current_bet)
     end
 
     it 'deals a new hand' do
-      blackjack.new_bet
+      blackjack.new_bet(input)
       expect(blackjack).to have_received(:deal_new_hand)
     end
   end
@@ -584,7 +585,7 @@ RSpec.describe Blackjack do
   describe '#new_num_decks' do
     before do
       blackjack.dealer_hand = dealer_hand
-      allow($stdin).to receive(:gets).and_return('2')
+      allow(input).to receive(:gets).and_return('2')
       allow(described_class).to receive(:getc).and_return('b', 'q')
       allow(blackjack).to receive(:print)
       allow(blackjack).to receive(:puts)
@@ -595,22 +596,22 @@ RSpec.describe Blackjack do
     end
 
     it 'clears screen' do
-      blackjack.new_num_decks
+      blackjack.new_num_decks(input)
       expect(blackjack).to have_received(:clear)
     end
 
     it 'draws hands' do
-      blackjack.new_num_decks
+      blackjack.new_num_decks(input)
       expect(blackjack).to have_received(:draw_hands)
     end
 
     it 'gets new number of decks' do
-      blackjack.new_num_decks
+      blackjack.new_num_decks(input)
       expect(blackjack.num_decks).to eq(2)
     end
 
     it 'normalizes number of decks' do
-      blackjack.new_num_decks
+      blackjack.new_num_decks(input)
       expect(blackjack).to have_received(:normalize_num_decks)
     end
   end

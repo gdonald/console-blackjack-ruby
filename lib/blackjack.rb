@@ -133,23 +133,23 @@ class Blackjack
     out
   end
 
-  def new_bet
+  def new_bet(input)
     clear
     draw_hands
 
     puts " Current Bet: $#{Format.money(current_bet / 100)}\n"
     print ' Enter New Bet: $'
 
-    self.current_bet = $stdin.gets.to_i * 100
+    self.current_bet = input.gets.to_i * 100
 
     normalize_current_bet
     deal_new_hand
   end
 
-  def new_num_decks
+  def new_num_decks(input)
     puts " Number Of Decks: #{num_decks}"
     print ' New Number Of Decks (1-8): '
-    self.num_decks = $stdin.gets.to_i
+    self.num_decks = input.gets.to_i
 
     normalize_num_decks
     clear_draw_hands_game_options
@@ -206,10 +206,10 @@ class Blackjack
     self.current_bet = money if current_bet > money
   end
 
-  def self.getc
+  def self.getc(input)
     begin
       system('stty raw -echo')
-      c = $stdin.getc
+      c = input.getc
     ensure
       system('stty -raw echo')
     end
