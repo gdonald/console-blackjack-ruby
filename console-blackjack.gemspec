@@ -5,7 +5,7 @@ require 'rake'
 Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.0'
   spec.name = 'console-blackjack'
-  spec.version = '1.0.9'
+  spec.version = '1.1.0'
   spec.summary = 'Console Blackjack'
   spec.description = 'Blackjack for your console, full version.'
   spec.author = 'Greg Donald'
