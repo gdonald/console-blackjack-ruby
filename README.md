@@ -1,7 +1,8 @@
 # console-blackjack-ruby
 
-![Blackjack](https://raw.githubusercontent.com/gdonald/console-blackjack-ruby/master/ss1.png)
 ![Blackjack](https://raw.githubusercontent.com/gdonald/console-blackjack-ruby/master/ss2.png)
+
+![Blackjack](https://raw.githubusercontent.com/gdonald/console-blackjack-ruby/master/ss1.png)
 
 ## Getting Started
 
