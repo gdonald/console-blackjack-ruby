@@ -16,7 +16,7 @@ class Shoe
 
   attr_accessor :blackjack, :num_decks, :cards
 
-  def initialize(blackjack, num_decks = 1)
+  def initialize(blackjack, num_decks)
     @blackjack = blackjack
     @num_decks = num_decks
     @cards = []
@@ -25,7 +25,6 @@ class Shoe
   def needs_to_shuffle?
     return true if cards.size.zero?
 
-    total_cards = num_decks * CARDS_PER_DECK
     cards_dealt = total_cards - cards.size
     used = cards_dealt / total_cards.to_f * 100.0
 
@@ -50,9 +49,9 @@ class Shoe
 
   def new_irregular(values = [])
     self.cards = []
-    while cards.count < Shoe::CARDS_PER_DECK
+    while cards.count < total_cards
       (0..3).each do |suit_value|
-        next if cards.count >= Shoe::CARDS_PER_DECK
+        next if cards.count >= total_cards
 
         values.each do |value|
           cards << Card.new(blackjack, value, suit_value)
@@ -60,6 +59,10 @@ class Shoe
       end
     end
     shuffle
+  end
+
+  def total_cards
+    num_decks * CARDS_PER_DECK
   end
 
   def new_aces

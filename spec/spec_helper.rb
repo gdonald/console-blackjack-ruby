@@ -9,7 +9,7 @@ end
 
 Dir.glob(File.join(File.dirname(__FILE__),
                    "..#{File::SEPARATOR}lib", '**',
-                   '*.rb')).sort.each(&method(:require))
+                   '*.rb')).each(&method(:require))
 
 require 'factory_bot'
 require 'pry'

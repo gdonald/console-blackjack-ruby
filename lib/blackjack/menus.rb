@@ -29,7 +29,9 @@ module Menus
       c = Blackjack.getc.to_i
       case c
       when (1..6)
+        self.deck_type = c
         shoe.send("new_#{SHOES[c]}")
+        save_game
       else
         clear_draw_hands_new_deck_type
       end

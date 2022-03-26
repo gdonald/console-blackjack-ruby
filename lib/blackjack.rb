@@ -19,11 +19,13 @@ class Blackjack
   include SplitHand
   include Utils
 
-  attr_accessor :shoe, :money, :player_hands, :dealer_hand, :num_decks, :face_type, :current_bet, :current_hand
+  attr_accessor :shoe, :money, :player_hands, :dealer_hand, :num_decks,
+                :deck_type, :face_type, :current_bet, :current_hand
 
   def initialize
     @num_decks = 1
     @face_type = 1
+    @deck_type = 1
     @money = 10_000
     @current_bet = 500
   end
@@ -54,7 +56,7 @@ class Blackjack
   end
 
   def deal_new_hand
-    shoe.new_regular if shoe.needs_to_shuffle?
+    shoe.send("new_#{SHOES[deck_type]}") if shoe.needs_to_shuffle?
     player_hand = build_new_hand
 
     if dealer_hand.upcard_is_ace? && !player_hand.blackjack?

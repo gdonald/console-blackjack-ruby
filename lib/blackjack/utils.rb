@@ -3,7 +3,7 @@
 module Utils
   def save_game
     File.open(SAVE_FILE, 'w') do |file|
-      file.puts "#{num_decks}|#{face_type}|#{money}|#{current_bet}"
+      file.puts "#{num_decks}|#{deck_type}|#{face_type}|#{money}|#{current_bet}"
     end
   end
 
@@ -12,9 +12,10 @@ module Utils
 
     a = File.read(SAVE_FILE).split('|')
     self.num_decks   = a[0].to_i
-    self.face_type   = a[1].to_i
-    self.money       = a[2].to_i
-    self.current_bet = a[3].to_i
+    self.deck_type   = a[1].to_i
+    self.face_type   = a[2].to_i
+    self.money       = a[3].to_i
+    self.current_bet = a[4].to_i
   end
 
   def clear_draw_hands

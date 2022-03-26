@@ -109,7 +109,8 @@ RSpec.describe Blackjack do
 
     it 'opens and put save file data' do
       blackjack.save_game
-      expected = "#{blackjack.num_decks}|#{blackjack.face_type}|#{blackjack.money}|#{blackjack.current_bet}"
+      fields = %i[num_decks deck_type face_type money current_bet]
+      expected = fields.map { |f| blackjack.send(f) }.join('|')
       expect(file).to have_received(:puts).with(expected)
     end
   end
@@ -128,7 +129,7 @@ RSpec.describe Blackjack do
     context 'with a readabale save file' do
       before do
         allow(File).to receive(:readable?).with(SAVE_FILE).and_return(true)
-        allow(File).to receive(:read).with(SAVE_FILE).and_return('8|1|2000|1000')
+        allow(File).to receive(:read).with(SAVE_FILE).and_return('8|1|1|2000|1000')
       end
 
       it 'loads num_decks from save file data' do
@@ -638,6 +639,7 @@ RSpec.describe Blackjack do
     before do
       blackjack.dealer_hand = dealer_hand
       allow(blackjack).to receive(:puts)
+      allow(blackjack).to receive(:save_game)
     end
 
     context 'when choosing a new deck type' do
@@ -653,6 +655,7 @@ RSpec.describe Blackjack do
         allow(blackjack.shoe).to receive(:new_regular)
         blackjack.new_deck_type
         expect(blackjack.shoe).to have_received(:new_regular)
+        expect(blackjack).to have_received(:save_game)
       end
 
       it 'builds a new aces' do
@@ -660,6 +663,7 @@ RSpec.describe Blackjack do
         allow(blackjack.shoe).to receive(:new_aces)
         blackjack.new_deck_type
         expect(blackjack.shoe).to have_received(:new_aces)
+        expect(blackjack).to have_received(:save_game)
       end
 
       it 'builds a new jacks' do
@@ -667,6 +671,7 @@ RSpec.describe Blackjack do
         allow(blackjack.shoe).to receive(:new_jacks)
         blackjack.new_deck_type
         expect(blackjack.shoe).to have_received(:new_jacks)
+        expect(blackjack).to have_received(:save_game)
       end
 
       it 'builds a new aces_jacks' do
@@ -674,6 +679,7 @@ RSpec.describe Blackjack do
         allow(blackjack.shoe).to receive(:new_aces_jacks)
         blackjack.new_deck_type
         expect(blackjack.shoe).to have_received(:new_aces_jacks)
+        expect(blackjack).to have_received(:save_game)
       end
 
       it 'builds a new sevens' do
@@ -681,6 +687,7 @@ RSpec.describe Blackjack do
         allow(blackjack.shoe).to receive(:new_sevens)
         blackjack.new_deck_type
         expect(blackjack.shoe).to have_received(:new_sevens)
+        expect(blackjack).to have_received(:save_game)
       end
 
       it 'builds a new eights' do
@@ -688,6 +695,7 @@ RSpec.describe Blackjack do
         allow(blackjack.shoe).to receive(:new_eights)
         blackjack.new_deck_type
         expect(blackjack.shoe).to have_received(:new_eights)
+        expect(blackjack).to have_received(:save_game)
       end
     end
 
@@ -697,6 +705,7 @@ RSpec.describe Blackjack do
         allow(blackjack).to receive(:draw_hands)
         blackjack.new_deck_type
         expect(blackjack).to have_received(:draw_hands)
+        expect(blackjack).to have_received(:save_game).twice
       end
     end
   end
