@@ -154,8 +154,7 @@ RSpec.describe Shoe do
     let(:shoe) { build(:shoe, :new_regular, blackjack: blackjack) }
 
     it 'removes the next card' do
-      shoe.next_card
-      expect(shoe.cards.size).to eq(51)
+      expect { shoe.next_card }.to change(shoe.cards, :size).by(-1)
     end
 
     it 'returns a Card' do
