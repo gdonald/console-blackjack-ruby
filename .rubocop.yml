@@ -32,7 +32,7 @@ RSpec/Be:
 RSpec/ExampleLength:
   Max: 6
 RSpec/MultipleMemoizedHelpers:
-  Max: 6
+  Max: 7
 RSpec/MultipleExpectations:
   Enabled: false
 RSpec/NotToNot:

@@ -2,10 +2,10 @@
 
 RSpec.describe Blackjack do
   let(:blackjack) { build(:blackjack, shoe: build(:shoe, :new_regular)) }
-  let(:player_hand) { build(:player_hand, blackjack: blackjack) }
-  let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
-  let(:ace) { build(:card, :ace, blackjack: blackjack) }
-  let(:ten) { build(:card, :ten, blackjack: blackjack) }
+  let(:player_hand) { build(:player_hand, blackjack:) }
+  let(:dealer_hand) { build(:dealer_hand, blackjack:) }
+  let(:ace) { build(:card, :ace, blackjack:) }
+  let(:ten) { build(:card, :ten, blackjack:) }
   let(:input) { StringIO.new }
 
   describe '#current_player_hand' do
@@ -101,7 +101,7 @@ RSpec.describe Blackjack do
   end
 
   describe '#save_game' do
-    let(:file) { instance_double('File') }
+    let(:file) { instance_double(File) }
 
     before do
       allow(File).to receive(:open).with(SAVE_FILE, 'w').and_yield(file)
@@ -110,8 +110,9 @@ RSpec.describe Blackjack do
 
     it 'opens and put save file data' do
       blackjack.save_game
-      fields = %i[num_decks deck_type face_type money current_bet]
-      expected = fields.map { |f| blackjack.send(f) }.join('|')
+      expected = %i[num_decks deck_type face_type money current_bet].map do |f|
+        blackjack.send(f)
+      end.join('|')
       expect(file).to have_received(:puts).with(expected)
     end
   end

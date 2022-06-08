@@ -2,8 +2,8 @@
 
 RSpec.describe Hand do
   let(:shoe) { build(:shoe, :new_regular) }
-  let(:blackjack) { build(:blackjack, shoe: shoe) }
-  let(:hand) { build(:hand, blackjack: blackjack) }
+  let(:blackjack) { build(:blackjack, shoe:) }
+  let(:hand) { build(:hand, blackjack:) }
 
   describe '.new' do
     it 'creates a hand' do

@@ -3,9 +3,9 @@
 RSpec.describe DealerHand do
   let(:shoe) { build(:shoe, :new_regular) }
   let(:blackjack) { build(:blackjack) }
-  let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
-  let(:ace) { build(:card, :ace, blackjack: blackjack) }
-  let(:ten) { build(:card, :ten, blackjack: blackjack) }
+  let(:dealer_hand) { build(:dealer_hand, blackjack:) }
+  let(:ace) { build(:card, :ace, blackjack:) }
+  let(:ten) { build(:card, :ten, blackjack:) }
 
   describe '.new' do
     it 'creates a dealer_hand' do

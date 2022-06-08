@@ -2,7 +2,7 @@
 
 RSpec.describe Card do
   let(:blackjack) { build(:blackjack) }
-  let(:card) { build(:card, blackjack: blackjack) }
+  let(:card) { build(:card, blackjack:) }
 
   describe '.new' do
     it 'creates a card' do

@@ -2,10 +2,10 @@
 
 RSpec.describe PlayerHand do
   let(:blackjack) { build(:blackjack, shoe: build(:shoe, :new_regular)) }
-  let(:player_hand) { build(:player_hand, blackjack: blackjack) }
-  let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
-  let(:ace) { build(:card, :ace, blackjack: blackjack) }
-  let(:ten) { build(:card, :ten, blackjack: blackjack) }
+  let(:player_hand) { build(:player_hand, blackjack:) }
+  let(:dealer_hand) { build(:dealer_hand, blackjack:) }
+  let(:ace) { build(:card, :ace, blackjack:) }
+  let(:ten) { build(:card, :ten, blackjack:) }
 
   describe '.new' do
     it 'creates a player_hand' do
@@ -328,7 +328,7 @@ RSpec.describe PlayerHand do
     end
 
     context 'when done' do
-      let(:dealer_hand) { build(:dealer_hand, blackjack: blackjack) }
+      let(:dealer_hand) { build(:dealer_hand, blackjack:) }
 
       before do
         allow(player_hand).to receive(:done?).and_return(true)
