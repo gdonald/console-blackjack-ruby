@@ -12,11 +12,11 @@ module PlayerHandDraw
 
   def draw_status
     case status
-    when LOST
+    when :lost
       draw_lost_str
-    when WON
+    when :won
       draw_won_str
-    when PUSH
+    when :push
       'Push'
     else
       ''
@@ -33,8 +33,8 @@ module PlayerHandDraw
 
   def draw_money(index)
     out = String.new('')
-    out << '-' if status == LOST
-    out << '+' if status == WON
+    out << '-' if status == :lost
+    out << '+' if status == :won
     out << '$' << Format.money(bet / 100.0)
     out << ' ⇐' if !played && index == blackjack.current_hand
     out << '  '
@@ -44,7 +44,7 @@ module PlayerHandDraw
   def draw_cards
     out = String.new('')
     out << cards.map { |card| "#{card} " }.join
-    out << ' ⇒  ' << value(SOFT).to_s << '  '
+    out << ' ⇒  ' << value(:soft).to_s << '  '
     out
   end
 end

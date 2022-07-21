@@ -24,9 +24,11 @@ class Card
   end
 
   def self.value(card, count_method, total)
-    value = card.value + 1
-    v = value > 9 ? 10 : value
-    count_method == SOFT && v == 1 && total < 11 ? 11 : v
+    value = card.value.succ
+    value = 10 if value > 9
+    return 11 if value == 1 && count_method == :soft && total < 11
+
+    value
   end
 
   def self.faces

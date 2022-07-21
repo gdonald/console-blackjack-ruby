@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-UNKNOWN = 0
-WON = 1
-LOST = 2
-PUSH = 3
-
-SOFT = 4
-HARD = 5
-
 class Hand
   attr_accessor :cards, :blackjack, :played
 
@@ -18,7 +10,7 @@ class Hand
   end
 
   def busted?
-    value(SOFT) > 21
+    value(:soft) > 21
   end
 
   def deal_card

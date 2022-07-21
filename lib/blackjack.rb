@@ -97,7 +97,7 @@ class Blackjack
   end
 
   def pay_hands
-    dealer_hand_value = dealer_hand.value(SOFT)
+    dealer_hand_value = dealer_hand.value(:soft)
     dealer_busted = dealer_hand.busted?
 
     player_hands.each do |player_hand|
@@ -165,7 +165,7 @@ class Blackjack
     player_hand.bet /= 2
     player_hand.played = true
     player_hand.payed = true
-    player_hand.status = LOST
+    player_hand.status = :lost
 
     self.money -= player_hand.bet
 

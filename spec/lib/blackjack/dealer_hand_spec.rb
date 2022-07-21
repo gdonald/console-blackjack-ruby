@@ -32,31 +32,31 @@ RSpec.describe DealerHand do
   describe '#value' do
     context 'with a soft count' do
       it 'returns 10' do
-        dealer_hand.cards << ten << ace
-        expect(dealer_hand.value(SOFT)).to eq(10)
+        dealer_hand.cards << ace << ten
+        expect(dealer_hand.value(:soft)).to eq(10)
       end
 
       it 'returns 11' do
-        dealer_hand.cards << ace << ten
-        expect(dealer_hand.value(SOFT)).to eq(11)
+        dealer_hand.cards << ten << ace
+        expect(dealer_hand.value(:soft)).to eq(11)
       end
 
       it 'returns 12' do
         dealer_hand.cards << ten << ace << ace
         dealer_hand.hide_down_card = false
-        expect(dealer_hand.value(SOFT)).to eq(12)
+        expect(dealer_hand.value(:soft)).to eq(12)
       end
     end
 
     context 'with a hard count' do
       it 'returns 10' do
-        dealer_hand.cards << ten << ace
-        expect(dealer_hand.value(HARD)).to eq(10)
+        dealer_hand.cards << ace << ten
+        expect(dealer_hand.value(:hard)).to eq(10)
       end
 
       it 'returns 1' do
-        dealer_hand.cards << ace << ten
-        expect(dealer_hand.value(HARD)).to eq(1)
+        dealer_hand.cards << ten << ace
+        expect(dealer_hand.value(:hard)).to eq(1)
       end
     end
   end
@@ -74,15 +74,15 @@ RSpec.describe DealerHand do
   end
 
   describe '#draw' do
-    it 'returns " 🂪 🂠 ⇒ 10"' do
-      dealer_hand.cards << ten << ace
-      expected = ' 🂪 🂠  ⇒  10'
+    it 'returns " 🂠 🂪 ⇒ 10"' do
+      dealer_hand.cards << ace << ten
+      expected = ' 🂠 🂪  ⇒  10'
       expect(dealer_hand.draw).to eq(expected)
     end
 
-    it 'returns " 🂡 🂠 ⇒ 11"' do
-      dealer_hand.cards << ace << ten
-      expected = ' 🂡 🂠  ⇒  11'
+    it 'returns " 🂠 🂡 ⇒ 11"' do
+      dealer_hand.cards << ten << ace
+      expected = ' 🂠 🂡  ⇒  11'
       expect(dealer_hand.draw).to eq(expected)
     end
 
@@ -97,12 +97,12 @@ RSpec.describe DealerHand do
   describe '#both_values' do
     context 'with a soft count' do
       it 'returns [10, 10]' do
-        dealer_hand.cards << ten << ace
+        dealer_hand.cards << ace << ten
         expect(dealer_hand.both_values).to eq([10, 10])
       end
 
       it 'returns [11, 1]' do
-        dealer_hand.cards << ace << ten
+        dealer_hand.cards << ten << ace
         expect(dealer_hand.both_values).to eq([11, 1])
       end
 
@@ -115,12 +115,12 @@ RSpec.describe DealerHand do
 
     context 'with a hard count' do
       it 'returns [10, 10]' do
-        dealer_hand.cards << ten << ace
+        dealer_hand.cards << ace << ten
         expect(dealer_hand.both_values).to eq([10, 10])
       end
 
       it 'returns [11, 1]' do
-        dealer_hand.cards << ace << ten
+        dealer_hand.cards << ten << ace
         expect(dealer_hand.both_values).to eq([11, 1])
       end
     end

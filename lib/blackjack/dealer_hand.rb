@@ -11,23 +11,13 @@ class DealerHand < Hand
   end
 
   def value(count_method)
-    total = total_card_value(count_method)
+    total = value_for_method(count_method)
 
-    if count_method == SOFT && total > 21
-      value(HARD)
+    if count_method == :soft && total > 21
+      value(:hard)
     else
       total
     end
-  end
-
-  def total_card_value(count_method)
-    total = 0
-    cards.each_with_index do |card, index|
-      next if index == 1 && hide_down_card
-
-      total += Card.value(card, count_method, total)
-    end
-    total
   end
 
   def upcard_is_ace?
@@ -37,10 +27,10 @@ class DealerHand < Hand
   def draw
     out = String.new(' ')
     cards.each_with_index do |card, index|
-      out << (index == 1 && hide_down_card ? Card.new(blackjack, 13, 0) : card).to_s
+      out << (index.zero? && hide_down_card ? Card.new(blackjack, 13, 0) : card).to_s
       out << ' '
     end
-    out << ' ⇒  ' << value(SOFT).to_s
+    out << ' ⇒  ' << value(:soft).to_s
   end
 
   def deal_required_cards
@@ -52,7 +42,7 @@ class DealerHand < Hand
   end
 
   def both_values
-    [value(SOFT), value(HARD)]
+    [value(:soft), value(:hard)]
   end
 
   def play
@@ -61,5 +51,17 @@ class DealerHand < Hand
     deal_required_cards if playing
     self.played = true
     blackjack.pay_hands
+  end
+
+  private
+
+  def value_for_method(count_method)
+    total = 0
+    cards.each_with_index do |card, index|
+      next if index.zero? && hide_down_card
+
+      total += Card.value(card, count_method, total)
+    end
+    total
   end
 end

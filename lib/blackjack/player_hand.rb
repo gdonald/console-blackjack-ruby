@@ -15,7 +15,7 @@ class PlayerHand < Hand
   def initialize(blackjack, bet)
     super(blackjack)
     @bet = bet
-    @status = UNKNOWN
+    @status = :unknown
     @payed = false
     @stood = false
   end
@@ -24,14 +24,14 @@ class PlayerHand < Hand
     return if payed
 
     self.payed = true
-    player_hand_value = value(SOFT)
+    player_hand_value = value(:soft)
 
     if player_hand_won?(dealer_busted, dealer_hand_value, player_hand_value)
       pay_won_hand
     elsif player_hand_lost?(dealer_hand_value, player_hand_value)
       collect_lost_hand
     else
-      self.status = PUSH
+      self.status = :push
     end
   end
 
@@ -45,20 +45,20 @@ class PlayerHand < Hand
 
   def collect_lost_hand
     blackjack.money -= bet
-    self.status = LOST
+    self.status = :lost
   end
 
   def pay_won_hand
     self.bet *= 1.5 if blackjack?
     blackjack.money += bet
-    self.status = WON
+    self.status = :won
   end
 
   def value(count_method)
     total = cards.inject(0) { |sum, card| sum + Card.value(card, count_method, sum) }
 
-    if count_method == SOFT && total > 21
-      value(HARD)
+    if count_method == :soft && total > 21
+      value(:hard)
     else
       total
     end
@@ -74,12 +74,12 @@ class PlayerHand < Hand
 
   def collect_busted_hand
     self.payed = true
-    self.status = LOST
+    self.status = :lost
     blackjack.money -= bet
   end
 
   def no_more_actions?
-    played || stood || blackjack? || busted? || value(SOFT) == 21 || value(HARD) == 21
+    played || stood || blackjack? || busted? || value(:soft) == 21 || value(:hard) == 21
   end
 
   def process

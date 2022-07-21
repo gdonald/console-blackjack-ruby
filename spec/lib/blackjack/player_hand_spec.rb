@@ -21,7 +21,7 @@ RSpec.describe PlayerHand do
     end
 
     it 'has an unknown status' do
-      expect(player_hand.status).to eq(UNKNOWN)
+      expect(player_hand.status).to eq(:unknown)
     end
 
     it 'has not been payed' do
@@ -38,21 +38,21 @@ RSpec.describe PlayerHand do
 
     it 'draws a lost hand' do
       player_hand.cards << ace << ace
-      player_hand.status = LOST
+      player_hand.status = :lost
       expected = " 🂡 🂡  ⇒  12  -$5.00  Lose!\n\n"
       expect(player_hand.draw(1)).to eq(expected)
     end
 
     it 'draws a won hand' do
       player_hand.cards << ace << ace
-      player_hand.status = WON
+      player_hand.status = :won
       expected = " 🂡 🂡  ⇒  12  +$5.00  Won!\n\n"
       expect(player_hand.draw(1)).to eq(expected)
     end
 
     it 'draws a push hand' do
       player_hand.cards << ace << ace
-      player_hand.status = PUSH
+      player_hand.status = :push
       expected = " 🂡 🂡  ⇒  12  $5.00  Push\n\n"
       expect(player_hand.draw(1)).to eq(expected)
     end
@@ -73,19 +73,19 @@ RSpec.describe PlayerHand do
     context 'with a soft count' do
       it 'returns 21' do
         player_hand.cards << ten << ace
-        expect(player_hand.value(SOFT)).to eq(21)
+        expect(player_hand.value(:soft)).to eq(21)
       end
 
       it 'returns 12' do
         player_hand.cards << ten << ace << ace
-        expect(player_hand.value(SOFT)).to eq(12)
+        expect(player_hand.value(:soft)).to eq(12)
       end
     end
 
     context 'with a hard count' do
       it 'returns 11' do
         player_hand.cards << ten << ace
-        expect(player_hand.value(HARD)).to eq(11)
+        expect(player_hand.value(:hard)).to eq(11)
       end
     end
   end
@@ -560,7 +560,7 @@ RSpec.describe PlayerHand do
     context 'when dealer busted' do
       it 'hand is won' do
         player_hand.pay(22, true)
-        expect(player_hand.status).to eq(WON)
+        expect(player_hand.status).to eq(:won)
       end
     end
 
@@ -574,7 +574,7 @@ RSpec.describe PlayerHand do
       it 'hand status is won' do
         player_hand.cards << ten << ten
         player_hand.pay(18, false)
-        expect(player_hand.status).to eq(WON)
+        expect(player_hand.status).to eq(:won)
       end
 
       it 'blackjack money is increased by player hand bet' do
@@ -592,7 +592,7 @@ RSpec.describe PlayerHand do
       it 'hand is lost' do
         player_hand.cards << ten << build(:card, :seven)
         player_hand.pay(18, false)
-        expect(player_hand.status).to eq(LOST)
+        expect(player_hand.status).to eq(:lost)
       end
 
       it 'blackjack money is descreased by player hand bet' do
@@ -604,7 +604,7 @@ RSpec.describe PlayerHand do
       it 'hand is push' do
         player_hand.cards << ten << build(:card, :seven)
         player_hand.pay(17, false)
-        expect(player_hand.status).to eq(PUSH)
+        expect(player_hand.status).to eq(:push)
       end
 
       it 'blackjack money is unaltered' do

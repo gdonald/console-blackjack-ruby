@@ -38,6 +38,10 @@ FactoryBot.define do
       value { 9 }
     end
 
+    trait :jack do
+      value { 10 }
+    end
+
     initialize_with { new(blackjack, value, suit) }
   end
 end

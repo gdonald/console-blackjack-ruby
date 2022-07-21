@@ -63,4 +63,39 @@ RSpec.describe Card do
       expect(described_class.faces[4][3]).to eq('🃕')
     end
   end
+
+  describe '.value' do
+    let(:card) { build(:card, blackjack:) }
+    let(:count_method) { :soft }
+    let(:total) { 0 }
+    let(:result) { described_class.value(card, count_method, total) }
+
+    it 'returns 11' do
+      expect(result).to eq(11)
+    end
+
+    context 'with a hard count' do
+      let(:count_method) { :hard }
+
+      it 'returns 1' do
+        expect(result).to eq(1)
+      end
+    end
+
+    context 'with a total of 11' do
+      let(:total) { 11 }
+
+      it 'returns 1' do
+        expect(result).to eq(1)
+      end
+    end
+
+    context 'with a face card' do
+      let(:card) { build(:card, :jack, blackjack:) }
+
+      it 'returns 10' do
+        expect(result).to eq(10)
+      end
+    end
+  end
 end

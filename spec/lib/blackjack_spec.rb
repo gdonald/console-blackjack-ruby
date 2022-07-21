@@ -393,7 +393,7 @@ RSpec.describe Blackjack do
 
     it 'draws the hands' do
       blackjack.draw_hands
-      expected = "\n Dealer:\n 🂪 🂠  ⇒  10\n\n Player $100.00:\n 🂡 🂪  ⇒  21  $5.00 ⇐  \n\n"
+      expected = "\n Dealer:\n 🂠 🂪  ⇒  10\n\n Player $100.00:\n 🂡 🂪  ⇒  21  $5.00 ⇐  \n\n"
       expect(blackjack).to have_received(:puts).with(expected)
     end
   end
@@ -816,9 +816,9 @@ RSpec.describe Blackjack do
       expect(player_hand.payed).to be_truthy
     end
 
-    it 'sets hand status as LOST' do
+    it 'sets hand status as :lost' do
       blackjack.insure_hand
-      expect(player_hand.status).to eq(LOST)
+      expect(player_hand.status).to eq(:lost)
     end
 
     it 'updates blackjack money' do

@@ -20,7 +20,7 @@ module PlayerHandActions
   end
 
   def can_hit?
-    !(played || stood || value(HARD) == 21 || blackjack? || busted?)
+    !(played || stood || value(:hard) == 21 || blackjack? || busted?)
   end
 
   def hit
