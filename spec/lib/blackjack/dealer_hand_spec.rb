@@ -24,7 +24,7 @@ RSpec.describe DealerHand do
 
     it 'returns true' do
       dealer_hand.cards << ten << ten << ten
-      dealer_hand.hide_down_card = false
+      dealer_hand.hide_first_card = false
       expect(dealer_hand).to be_busted
     end
   end
@@ -43,7 +43,7 @@ RSpec.describe DealerHand do
 
       it 'returns 12' do
         dealer_hand.cards << ten << ace << ace
-        dealer_hand.hide_down_card = false
+        dealer_hand.hide_first_card = false
         expect(dealer_hand.value(:soft)).to eq(12)
       end
     end
@@ -88,7 +88,7 @@ RSpec.describe DealerHand do
 
     it 'returns " 🂡 🂪 ⇒ 21"' do
       dealer_hand.cards << ace << ten
-      dealer_hand.hide_down_card = false
+      dealer_hand.hide_first_card = false
       expected = ' 🂡 🂪  ⇒  21'
       expect(dealer_hand.draw).to eq(expected)
     end
@@ -108,7 +108,7 @@ RSpec.describe DealerHand do
 
       it 'returns [12, 12]' do
         dealer_hand.cards << ten << ace << ace
-        dealer_hand.hide_down_card = false
+        dealer_hand.hide_first_card = false
         expect(dealer_hand.both_values).to eq([12, 12])
       end
     end
@@ -172,13 +172,13 @@ RSpec.describe DealerHand do
       it 'hides down card when no blackjack' do
         allow(dealer_hand).to receive(:blackjack?).and_return(false)
         dealer_hand.play
-        expect(dealer_hand.hide_down_card).to be_truthy
+        expect(dealer_hand.hide_first_card).to be_truthy
       end
 
       it 'shows down card if blackjack' do
         allow(dealer_hand).to receive(:blackjack?).and_return(true)
         dealer_hand.play
-        expect(dealer_hand.hide_down_card).to be_falsey
+        expect(dealer_hand.hide_first_card).to be_falsey
       end
 
       it 'does not deal any cards' do
@@ -197,13 +197,13 @@ RSpec.describe DealerHand do
       it 'shows down card if not blackjack' do
         allow(dealer_hand).to receive(:blackjack?).and_return(false)
         dealer_hand.play
-        expect(dealer_hand.hide_down_card).to be_falsey
+        expect(dealer_hand.hide_first_card).to be_falsey
       end
 
       it 'shows down card if blackjack' do
         allow(dealer_hand).to receive(:blackjack?).and_return(true)
         dealer_hand.play
-        expect(dealer_hand.hide_down_card).to be_falsey
+        expect(dealer_hand.hide_first_card).to be_falsey
       end
 
       it 'deals required cards' do

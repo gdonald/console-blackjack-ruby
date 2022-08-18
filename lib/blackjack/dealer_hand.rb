@@ -3,11 +3,11 @@
 require_relative 'hand'
 
 class DealerHand < Hand
-  attr_accessor :blackjack, :hide_down_card
+  attr_accessor :blackjack, :hide_first_card
 
   def initialize(blackjack)
     super(blackjack)
-    @hide_down_card = true
+    @hide_first_card = true
   end
 
   def value(count_method)
@@ -27,7 +27,7 @@ class DealerHand < Hand
   def draw
     out = String.new(' ')
     cards.each_with_index do |card, index|
-      out << (index.zero? && hide_down_card ? Card.new(blackjack, 13, 0) : card).to_s
+      out << (index.zero? && hide_first_card ? Card.new(blackjack, 13, 0) : card).to_s
       out << ' '
     end
     out << ' ⇒  ' << value(:soft).to_s
@@ -47,7 +47,7 @@ class DealerHand < Hand
 
   def play
     playing = blackjack.need_to_play_dealer_hand?
-    self.hide_down_card = false if blackjack? || playing
+    self.hide_first_card = false if blackjack? || playing
     deal_required_cards if playing
     self.played = true
     blackjack.pay_hands
@@ -58,7 +58,7 @@ class DealerHand < Hand
   def value_for_method(count_method)
     total = 0
     cards.each_with_index do |card, index|
-      next if index.zero? && hide_down_card
+      next if index.zero? && hide_first_card
 
       total += Card.value(card, count_method, total)
     end

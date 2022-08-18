@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :dealer_hand do
     blackjack { nil }
-    hide_down_card { true }
+    hide_first_card { true }
 
     initialize_with { new(blackjack) }
   end

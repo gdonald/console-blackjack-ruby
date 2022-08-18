@@ -63,7 +63,7 @@ class Blackjack
       draw_hands
       ask_insurance
     elsif player_hand.done?
-      dealer_hand.hide_down_card = false
+      dealer_hand.hide_first_card = false
       pay_hands
       draw_hands
       draw_bet_options
@@ -175,7 +175,7 @@ class Blackjack
 
   def no_insurance
     if dealer_hand.blackjack?
-      dealer_hand.hide_down_card = false
+      dealer_hand.hide_first_card = false
 
       pay_hands
       draw_hands

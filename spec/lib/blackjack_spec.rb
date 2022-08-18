@@ -326,7 +326,7 @@ RSpec.describe Blackjack do
 
       it 'shows dealer down card' do
         blackjack.deal_new_hand
-        expect(dealer_hand.hide_down_card).to be_falsey
+        expect(dealer_hand.hide_first_card).to be_falsey
       end
 
       it 'hands are paid' do
@@ -854,7 +854,7 @@ RSpec.describe Blackjack do
 
       it 'shows dealer down card' do
         blackjack.no_insurance
-        expect(dealer_hand.hide_down_card).to be_falsey
+        expect(dealer_hand.hide_first_card).to be_falsey
       end
 
       it 'pays hands' do
