@@ -17,7 +17,7 @@ Run:
 ## Status
 
 [![Ruby](https://github.com/gdonald/console-blackjack-ruby/workflows/Ruby/badge.svg)](https://github.com/gdonald/console-blackjack-ruby/actions)
-[![Downloads](https://ruby-gem-downloads-badge.herokuapp.com/console-blackjack?color=blue&type=total&total_label=)](https://rubygems.org/gems/console-blackjack)
+[![Downloads](https://img.shields.io/gem/dt/console-blackjack?color=blue)](https://rubygems.org/gems/console-blackjack)
 
 ## License
 
