@@ -1,5 +1,6 @@
-.idea
 coverage
 .DS_Store
 bj.txt
 console-blackjack*gem
+tags
+
