@@ -5,7 +5,6 @@ ruby '3.1.2'
 source 'https://rubygems.org'
 
 gem 'factory_bot'
-gem 'pry'
 gem 'rake'
 gem 'rspec'
 gem 'rubocop', require: false

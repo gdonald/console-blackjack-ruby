@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pry'
-
 require_relative 'blackjack/dealer_hand'
 require_relative 'blackjack/format'
 require_relative 'blackjack/menus'

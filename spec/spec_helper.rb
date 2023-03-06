@@ -12,7 +12,6 @@ Dir.glob(File.join(File.dirname(__FILE__),
                    '*.rb')).each(&method(:require))
 
 require 'factory_bot'
-require 'pry'
 
 ENV['CLEAR_TERM'] = '0'
 
