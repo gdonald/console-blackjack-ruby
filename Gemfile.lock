@@ -17,7 +17,7 @@ GEM
     json (2.6.3)
     minitest (5.18.0)
     parallel (1.22.1)
-    parser (3.2.1.0)
+    parser (3.2.1.1)
       ast (~> 2.4.1)
     rainbow (3.1.1)
     rake (13.0.6)
@@ -36,7 +36,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-support (3.12.0)
-    rubocop (1.47.0)
+    rubocop (1.48.0)
       json (~> 2.3)
       parallel (~> 1.10)
       parser (>= 3.2.0.0)
@@ -52,7 +52,7 @@ GEM
       rubocop (~> 1.41)
     rubocop-rake (0.6.0)
       rubocop (~> 1.0)
-    rubocop-rspec (2.18.1)
+    rubocop-rspec (2.19.0)
       rubocop (~> 1.33)
       rubocop-capybara (~> 2.17)
     ruby-progressbar (1.13.0)
@@ -79,7 +79,7 @@ DEPENDENCIES
   simplecov
 
 RUBY VERSION
-   ruby 3.1.2p20
+   ruby 3.2.1p31
 
 BUNDLED WITH
    2.3.15
