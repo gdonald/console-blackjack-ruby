@@ -5,7 +5,7 @@ FactoryBot.define do
     game { nil }
     bet { 500 }
     status { :unknown }
-    payed { false }
+    paid { false }
     stood { false }
 
     initialize_with { new(game, bet) }

@@ -10,20 +10,20 @@ class PlayerHand < Hand
 
   MAX_PLAYER_HANDS = 7
 
-  attr_accessor :blackjack, :bet, :status, :payed, :cards, :stood
+  attr_accessor :blackjack, :bet, :status, :paid, :cards, :stood
 
   def initialize(blackjack, bet)
     super(blackjack)
     @bet = bet
     @status = :unknown
-    @payed = false
+    @paid = false
     @stood = false
   end
 
   def pay(dealer_hand_value, dealer_busted)
-    return if payed
+    return if paid
 
-    self.payed = true
+    self.paid = true
     player_hand_value = value(:soft)
 
     if player_hand_won?(dealer_busted, dealer_hand_value, player_hand_value)
@@ -68,12 +68,12 @@ class PlayerHand < Hand
     return false unless no_more_actions?
 
     self.played = true
-    collect_busted_hand if !payed && busted?
+    collect_busted_hand if !paid && busted?
     true
   end
 
   def collect_busted_hand
-    self.payed = true
+    self.paid = true
     self.status = :lost
     blackjack.money -= bet
   end

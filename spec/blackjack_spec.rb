@@ -811,9 +811,9 @@ RSpec.describe Blackjack do
       expect(player_hand.played).to be_truthy
     end
 
-    it 'sets hand as payed' do
+    it 'sets hand as paid' do
       blackjack.insure_hand
-      expect(player_hand.payed).to be_truthy
+      expect(player_hand.paid).to be_truthy
     end
 
     it 'sets hand status as :lost' do

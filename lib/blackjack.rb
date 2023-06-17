@@ -162,7 +162,7 @@ class Blackjack
     player_hand = current_player_hand
     player_hand.bet /= 2
     player_hand.played = true
-    player_hand.payed = true
+    player_hand.paid = true
     player_hand.status = :lost
 
     self.money -= player_hand.bet

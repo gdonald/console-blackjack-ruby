@@ -24,8 +24,8 @@ RSpec.describe PlayerHand do
       expect(player_hand.status).to eq(:unknown)
     end
 
-    it 'has not been payed' do
-      expect(player_hand.payed).to be_falsey
+    it 'has not been paid' do
+      expect(player_hand.paid).to be_falsey
     end
   end
 
@@ -550,8 +550,8 @@ RSpec.describe PlayerHand do
   end
 
   describe '#pay' do
-    it 'returns if already payed' do
-      player_hand.payed = true
+    it 'returns if already paid' do
+      player_hand.paid = true
       allow(player_hand).to receive(:value)
       player_hand.pay(18, false)
       expect(player_hand).to_not have_received(:value)
@@ -565,10 +565,10 @@ RSpec.describe PlayerHand do
     end
 
     context 'when dealer is not busted' do
-      it 'hand is set to payed' do
+      it 'hand is set to paid' do
         player_hand.cards << ten << ten
         player_hand.pay(18, false)
-        expect(player_hand.payed).to be_truthy
+        expect(player_hand.paid).to be_truthy
       end
 
       it 'hand status is won' do
