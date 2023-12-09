@@ -48,16 +48,14 @@ RSpec.describe Blackjack do
 
     context 'when busted' do
       it 'returns false' do
-        allow(player_hand).to receive(:blackjack?).and_return(false)
-        allow(player_hand).to receive(:busted?).and_return(true)
+        allow(player_hand).to receive_messages(blackjack?: false, busted?: true)
         expect(blackjack).to_not be_need_to_play_dealer_hand
       end
     end
 
     context 'when blackjack' do
       it 'returns false' do
-        allow(player_hand).to receive(:busted?).and_return(false)
-        allow(player_hand).to receive(:blackjack?).and_return(true)
+        allow(player_hand).to receive_messages(busted?: false, blackjack?: true)
         expect(blackjack).to_not be_need_to_play_dealer_hand
       end
     end

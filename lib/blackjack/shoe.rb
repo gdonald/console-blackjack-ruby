@@ -23,7 +23,7 @@ class Shoe
   end
 
   def needs_to_shuffle?
-    return true if cards.size.zero?
+    return true if cards.empty?
 
     cards_dealt = total_cards - cards.size
     used = cards_dealt / total_cards.to_f * 100.0
@@ -38,8 +38,8 @@ class Shoe
   def new_regular
     self.cards = []
     num_decks.times do
-      (0..3).each do |suit_value|
-        (0..12).each do |value|
+      4.times do |suit_value|
+        13.times do |value|
           cards << Card.new(blackjack, value, suit_value)
         end
       end
@@ -50,7 +50,7 @@ class Shoe
   def new_irregular(values = [])
     self.cards = []
     while cards.count < total_cards
-      (0..3).each do |suit_value|
+      4.times do |suit_value|
         next if cards.count >= total_cards
 
         values.each do |value|

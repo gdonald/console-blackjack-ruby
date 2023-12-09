@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        ruby-version: ['3.2.1']
+        ruby-version: ['3.2.2']
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
