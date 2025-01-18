@@ -13,22 +13,14 @@ module PlayerHandDraw
   def draw_status
     case status
     when :lost
-      draw_lost_str
+      busted? ? 'Busted!' : 'Lose!'
     when :won
-      draw_won_str
+      blackjack? ? 'Blackjack!' : 'Won!'
     when :push
       'Push'
     else
       ''
     end
-  end
-
-  def draw_lost_str
-    busted? ? 'Busted!' : 'Lose!'
-  end
-
-  def draw_won_str
-    blackjack? ? 'Blackjack!' : 'Won!'
   end
 
   def draw_money(index)

@@ -518,27 +518,37 @@ RSpec.describe PlayerHand do
     end
   end
 
-  describe '#draw_lost_str' do
-    it 'returns Busted!' do
-      allow(player_hand).to receive(:busted?).and_return(true)
-      expect(player_hand.draw_lost_str).to eq('Busted!')
+  describe '#draw_status' do
+    context 'with a lost hand' do
+      before do
+        allow(player_hand).to receive(:status).and_return(:lost)
+      end
+
+      it 'returns Busted!' do
+        allow(player_hand).to receive(:busted?).and_return(true)
+        expect(player_hand.draw_status).to eq('Busted!')
+      end
+
+      it 'returns Lose!' do
+        allow(player_hand).to receive(:busted?).and_return(false)
+        expect(player_hand.draw_status).to eq('Lose!')
+      end
     end
 
-    it 'returns Lose!' do
-      allow(player_hand).to receive(:busted?).and_return(false)
-      expect(player_hand.draw_lost_str).to eq('Lose!')
-    end
-  end
+    context 'with a won hand' do
+      before do
+        allow(player_hand).to receive(:status).and_return(:won)
+      end
 
-  describe '#draw_won_str' do
-    it 'returns Blackjack!' do
-      allow(player_hand).to receive(:blackjack?).and_return(true)
-      expect(player_hand.draw_won_str).to eq('Blackjack!')
-    end
+      it 'returns Blackjack!' do
+        allow(player_hand).to receive(:blackjack?).and_return(true)
+        expect(player_hand.draw_status).to eq('Blackjack!')
+      end
 
-    it 'returns Won!' do
-      allow(player_hand).to receive(:blackjack?).and_return(false)
-      expect(player_hand.draw_won_str).to eq('Won!')
+      it 'returns Won!' do
+        allow(player_hand).to receive(:blackjack?).and_return(false)
+        expect(player_hand.draw_status).to eq('Won!')
+      end
     end
   end
 
