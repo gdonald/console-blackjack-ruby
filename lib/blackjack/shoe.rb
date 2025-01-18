@@ -35,54 +35,46 @@ class Shoe
     7.times { cards.shuffle! }
   end
 
-  def new_regular
-    self.cards = []
-    num_decks.times do
-      4.times do |suit_value|
-        13.times do |value|
-          cards << Card.new(blackjack, value, suit_value)
-        end
-      end
-    end
-    shuffle
+  def total_cards
+    @total_cards ||= num_decks * CARDS_PER_DECK
   end
 
-  def new_irregular(values = [])
+  def build_deck(values = [])
     self.cards = []
     while cards.count < total_cards
-      4.times do |suit_value|
+      4.times do |suit|
         next if cards.count >= total_cards
 
         values.each do |value|
-          cards << Card.new(blackjack, value, suit_value)
+          cards << Card.new(blackjack, value, suit)
         end
       end
     end
     shuffle
   end
 
-  def total_cards
-    num_decks * CARDS_PER_DECK
+  def new_regular
+    build_deck((0..12).to_a)
   end
 
   def new_aces
-    new_irregular([0])
+    build_deck([0])
   end
 
   def new_jacks
-    new_irregular([10])
+    build_deck([10])
   end
 
   def new_aces_jacks
-    new_irregular([0, 10])
+    build_deck([0, 10])
   end
 
   def new_sevens
-    new_irregular([6])
+    build_deck([6])
   end
 
   def new_eights
-    new_irregular([7])
+    build_deck([7])
   end
 
   def next_card

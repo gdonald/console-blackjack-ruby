@@ -496,20 +496,6 @@ RSpec.describe PlayerHand do
       end.to output(" (H) Hit  (S) Stand\n").to_stdout
     end
 
-    it 'cannot hit' do
-      allow(player_hand).to receive(:can_hit?).and_return(false)
-      expect do
-        player_hand.draw_actions
-      end.to output(" (S) Stand\n").to_stdout
-    end
-
-    it 'cannot stand' do
-      allow(player_hand).to receive(:can_stand?).and_return(false)
-      expect do
-        player_hand.draw_actions
-      end.to output(" (H) Hit\n").to_stdout
-    end
-
     it 'can split' do
       allow(player_hand).to receive(:can_split?).and_return(true)
       expect do
@@ -522,6 +508,13 @@ RSpec.describe PlayerHand do
       expect do
         player_hand.draw_actions
       end.to output(" (H) Hit  (S) Stand  (D) Double\n").to_stdout
+    end
+
+    it 'can split and double' do
+      allow(player_hand).to receive_messages(can_split?: true, can_dbl?: true)
+      expect do
+        player_hand.draw_actions
+      end.to output(" (H) Hit  (S) Stand  (P) Split  (D) Double\n").to_stdout
     end
   end
 

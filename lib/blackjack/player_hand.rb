@@ -54,16 +54,6 @@ class PlayerHand < Hand
     self.status = :won
   end
 
-  def value(count_method)
-    total = cards.inject(0) { |sum, card| sum + Card.value(card, count_method, sum) }
-
-    if count_method == :soft && total > 21
-      value(:hard)
-    else
-      total
-    end
-  end
-
   def done?
     return false unless no_more_actions?
 
@@ -115,8 +105,8 @@ class PlayerHand < Hand
 
   def draw_actions
     actions = []
-    actions << '(H) Hit' if can_hit?
-    actions << '(S) Stand' if can_stand?
+    actions << '(H) Hit'
+    actions << '(S) Stand'
     actions << '(P) Split' if can_split?
     actions << '(D) Double' if can_dbl?
     puts " #{actions.join('  ')}"

@@ -10,9 +10,7 @@ class Card
   end
 
   def to_s
-    return Card.faces[value][suit] if blackjack.face_type == 1
-
-    Card.faces2[value][suit]
+    (blackjack.face_type == 1 ? Card.faces : Card.faces2)[value][suit]
   end
 
   def ace?

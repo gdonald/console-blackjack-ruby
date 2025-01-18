@@ -18,8 +18,19 @@ class Hand
   end
 
   def blackjack?
-    return false if cards.size != 2
+    cards.size == 2 && value(:soft) == 21
+  end
 
-    (cards.first.ace? && cards.last.ten?) || (cards.first.ten? && cards.last.ace?)
+  def value(count_method, hide_first_card: false)
+    total = 0
+    cards.each_with_index do |card, index|
+      next if index.zero? && hide_first_card
+
+      total += Card.value(card, count_method, total)
+    end
+
+    return value(:hard, hide_first_card:) if count_method == :soft && total > 21
+
+    total
   end
 end

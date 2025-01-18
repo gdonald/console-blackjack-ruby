@@ -33,12 +33,12 @@ RSpec.describe DealerHand do
     context 'with a soft count' do
       it 'returns 10' do
         dealer_hand.cards << ace << ten
-        expect(dealer_hand.value(:soft)).to eq(10)
+        expect(dealer_hand.value(:soft, hide_first_card: true)).to eq(10)
       end
 
       it 'returns 11' do
         dealer_hand.cards << ten << ace
-        expect(dealer_hand.value(:soft)).to eq(11)
+        expect(dealer_hand.value(:soft, hide_first_card: true)).to eq(11)
       end
 
       it 'returns 12' do
@@ -51,12 +51,12 @@ RSpec.describe DealerHand do
     context 'with a hard count' do
       it 'returns 10' do
         dealer_hand.cards << ace << ten
-        expect(dealer_hand.value(:hard)).to eq(10)
+        expect(dealer_hand.value(:hard, hide_first_card: true)).to eq(10)
       end
 
       it 'returns 1' do
         dealer_hand.cards << ten << ace
-        expect(dealer_hand.value(:hard)).to eq(1)
+        expect(dealer_hand.value(:hard, hide_first_card: true)).to eq(1)
       end
     end
   end
