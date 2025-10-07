@@ -11,7 +11,7 @@ class DealerHand < Hand
   end
 
   def upcard_is_ace?
-    cards.first.ace?
+    cards.last.ace?
   end
 
   def draw

@@ -303,7 +303,7 @@ RSpec.describe Blackjack do
     context 'when the dealer upcard is ace and player hand is not busted' do
       before do
         allow(blackjack).to receive(:build_new_hand).and_return(player_hand)
-        dealer_hand.cards << ace << ten
+        dealer_hand.cards << ten << ace
       end
 
       it 'asks about insurance' do

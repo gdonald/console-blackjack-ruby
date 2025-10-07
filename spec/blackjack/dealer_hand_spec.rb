@@ -64,12 +64,12 @@ RSpec.describe DealerHand do
   describe '#upcard_is_ace?' do
     it 'returns false' do
       dealer_hand.cards << ten << ace
-      expect(dealer_hand).to_not be_upcard_is_ace
+      expect(dealer_hand).to be_upcard_is_ace
     end
 
     it 'returns true' do
       dealer_hand.cards << ace << ten
-      expect(dealer_hand).to be_upcard_is_ace
+      expect(dealer_hand).to_not be_upcard_is_ace
     end
   end
 
