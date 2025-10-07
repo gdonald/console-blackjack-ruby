@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
+# gem build console-blackjack.gemspec
+# gem push console-blackjack-1.1.7.gem
+
 require 'rake'
 
 Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.4'
   spec.name = 'console-blackjack'
-  spec.version = '1.1.6'
+  spec.version = '1.1.7'
   spec.summary = 'Console Blackjack'
   spec.description = 'Blackjack for your console, full version.'
   spec.author = 'Greg Donald'
